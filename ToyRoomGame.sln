@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Express 2012 for Windows Phone
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToyRoomContent", "ToyRoomGame\ToyRoomContent\ToyRoomContent.contentproj", "{D1D7EB3D-FDF5-4F1C-A4DC-26F6AA62FC34}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToyRoomGame", "ToyRoomGame\ToyRoomGame\ToyRoomGame.csproj", "{46A039DA-B62D-4772-97E3-7EE80C845979}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Windows Phone = Debug|Windows Phone
+		Release|Windows Phone = Release|Windows Phone
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D1D7EB3D-FDF5-4F1C-A4DC-26F6AA62FC34}.Debug|Windows Phone.ActiveCfg = Debug|Windows Phone
+		{D1D7EB3D-FDF5-4F1C-A4DC-26F6AA62FC34}.Release|Windows Phone.ActiveCfg = Release|Windows Phone
+		{46A039DA-B62D-4772-97E3-7EE80C845979}.Debug|Windows Phone.ActiveCfg = Debug|Windows Phone
+		{46A039DA-B62D-4772-97E3-7EE80C845979}.Debug|Windows Phone.Build.0 = Debug|Windows Phone
+		{46A039DA-B62D-4772-97E3-7EE80C845979}.Debug|Windows Phone.Deploy.0 = Debug|Windows Phone
+		{46A039DA-B62D-4772-97E3-7EE80C845979}.Release|Windows Phone.ActiveCfg = Release|Windows Phone
+		{46A039DA-B62D-4772-97E3-7EE80C845979}.Release|Windows Phone.Build.0 = Release|Windows Phone
+		{46A039DA-B62D-4772-97E3-7EE80C845979}.Release|Windows Phone.Deploy.0 = Release|Windows Phone
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
