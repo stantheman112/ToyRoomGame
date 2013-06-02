@@ -51,6 +51,7 @@
     <XnaCompressContent>false</XnaCompressContent>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Devices.Sensors, Version=7.0.0.0, Culture=neutral, PublicKeyToken=24eec0d8c86cda1e, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Xna.Framework" />
     <Reference Include="Microsoft.Xna.Framework.Game" />
     <Reference Include="Microsoft.Xna.Framework.Graphics" />
@@ -73,6 +74,7 @@
     <Compile Include="Components\MoveAbleComponent.cs" />
     <Compile Include="Components\RLGameComponent.cs" />
     <Compile Include="GameTools.cs" />
+    <Compile Include="Scenes\Scene4.cs" />
     <Compile Include="Scenes\Scene1.cs" />
     <Compile Include="Scenes\Scene3.cs" />
     <Compile Include="Scenes\Lobby.cs" />

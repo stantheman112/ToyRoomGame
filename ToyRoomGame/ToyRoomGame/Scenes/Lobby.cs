@@ -173,9 +173,10 @@ namespace WindowsPhoneGame1.Scenes
 
             if (playButton.compPushed(touchCollection))
             {
-                wichLevel = gameData.getProgression("lobby")+1;
+               // wichLevel = gameData.getProgression("lobby")+1;
+                wichLevel = 4;
                 this.UnloadContent();
-           ;
+          
             }
             for (int i = 0; i < levels.Count; i++)
             {

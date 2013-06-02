@@ -13,6 +13,7 @@ using RLGames;
 using WindowsPhoneGame1.Components;
 using WindowsPhoneGame1.GameStorage;
 using System.Diagnostics;
+using Microsoft.Devices.Sensors;
 
 
 namespace WindowsPhoneGame1.Scenes
@@ -46,7 +47,8 @@ namespace WindowsPhoneGame1.Scenes
         List<BasicComponent> floorToysB, floorToysI, floorToys;
         private bool somethingMoving = false;
         GameGUI talkingBubble;
-
+        Accelerometer accelSensor;
+        Vector3 accelReading = new Vector3();
 
 
         #endregion 
@@ -76,6 +78,13 @@ namespace WindowsPhoneGame1.Scenes
             // TODO: Construct any child components here
         }
 
+        private void accelSensor_ReadingChanged(object sender, AccelerometerReadingEventArgs e)
+        {
+            accelReading.X = (float)e.X;
+            accelReading.Y = (float)e.Y;
+            accelReading.Z = (float)e.Z;
+        }
+
 
         /// <summary>
         /// Allows the game component to perform any initialization it needs to before starting
@@ -83,7 +92,10 @@ namespace WindowsPhoneGame1.Scenes
         /// </summary>
         public override void Initialize()
         {
-           
+            accelSensor = new Accelerometer();
+            accelSensor.Start();
+            accelSensor.ReadingChanged += accelSensor_ReadingChanged;
+
             floorToysB = new List<BasicComponent>();
             floorToysI = new List<BasicComponent>();
             floorToys = new List<BasicComponent>();
@@ -256,7 +268,10 @@ namespace WindowsPhoneGame1.Scenes
 
         public override void Update(GameTime gameTime)
         {
-           
+            if (basketLeft.CompRectX >= -50 && accelReading.Y > 0.0f)
+                basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * -20);
+            if (basketLeft.CompRectX <= 590 && accelReading.Y < 0.0f)
+                basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * -20);
             if (somethingMoving == true)
             {
                 bool chkMoving = false;
