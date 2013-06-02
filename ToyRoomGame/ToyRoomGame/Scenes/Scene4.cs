@@ -76,7 +76,7 @@ namespace WindowsPhoneGame1.Scenes
             Components = components;
             Content = content;
             colorList = GameTools.elementColors();
-            gameStorage = new GameData("scene1");
+            gameStorage = new GameData("scene4");
             if(gameStorage.fileExists(gameStorage.FileName)==false)
                  gameStorage.saveScore(0, 0);
             toyTidiedUp = new List<int>();

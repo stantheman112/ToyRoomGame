@@ -27,6 +27,7 @@ namespace WindowsPhoneGame1
         Scene2 scene2;
         Scene3 scene3;
         Scene4 scene4;
+        Scene5 scene5;
        
 
         private int activeScene = 0;
@@ -148,6 +149,17 @@ namespace WindowsPhoneGame1
 
                     }
                     break;
+                case 5:
+                    if (scene5.SceneCompleted == true)
+                    {
+                        Components.Remove(scene5);
+                        lobby = new Lobby(this, Content, Components);
+                        Components.Add(lobby);
+                        activeScene = 0;
+                        lobby.WichLevel = 0;
+
+                    }
+                    break;
                 default:
                     Console.WriteLine("Default case");
                     break;
@@ -182,6 +194,13 @@ namespace WindowsPhoneGame1
                         Components.Add(scene4);
                         Components.Remove(lobby);
                         activeScene = 4;
+                        lobby.WichLevel = -1;
+                        break;
+                    case 5:
+                        scene5 = new Scene5(this, Content, Components);
+                        Components.Add(scene5);
+                        Components.Remove(lobby);
+                        activeScene = 5;
                         lobby.WichLevel = -1;
                         break;
                     default:
