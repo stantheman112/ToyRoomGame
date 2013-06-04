@@ -98,7 +98,7 @@ namespace WindowsPhoneGame1.Scenes
 
         protected override void LoadContent()
         {
-            for (int i = 1; i < 5; i++)
+            for (int i = 1; i < 7; i++)
             {
                  Texture2D tmp, tmpg;
               
@@ -114,8 +114,8 @@ namespace WindowsPhoneGame1.Scenes
 
             sf32 = Content.Load<SpriteFont>("sf32");
             gameGUI = new GameGUI(this.Game, sf50, new Vector2(250, 10), "Toyroom", Color.Black);
-            int lvlHorPos = 260;
-            for (int i = 0; i < 4; i++)
+            int lvlHorPos = 220;
+            for (int i = 0; i < 6; i++)
             {
                 if (i == sceneProgression)
                 {
@@ -130,7 +130,7 @@ namespace WindowsPhoneGame1.Scenes
                    // levels[i].ComponentType = (i + 1).ToString();
                 }
                
-                lvlHorPos = lvlHorPos + 100;
+                lvlHorPos = lvlHorPos + 70;
             }
 
          //   gameGUI = new GameGUI(this.Game, spriteFont, new Vector2(0, 0), "Dette er en test", Color.White);

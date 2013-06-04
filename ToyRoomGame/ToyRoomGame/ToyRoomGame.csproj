@@ -74,6 +74,7 @@
     <Compile Include="Components\MoveAbleComponent.cs" />
     <Compile Include="Components\RLGameComponent.cs" />
     <Compile Include="GameTools.cs" />
+    <Compile Include="Scenes\Scene6.cs" />
     <Compile Include="Scenes\scene5.cs" />
     <Compile Include="Scenes\Scene4.cs" />
     <Compile Include="Scenes\Scene1.cs" />
