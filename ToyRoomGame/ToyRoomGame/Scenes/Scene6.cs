@@ -190,30 +190,34 @@ namespace WindowsPhoneGame1.Scenes
 
             for (int i = 0; i < textures.Count; i++)
             {
-                int x = rnd.Next(150, 750);
-                int y = rnd.Next(250, 400);
+                //int x = rnd.Next(150, 750);
+                //int y = rnd.Next(250, 400);
 
-                double rotation = rnd.NextDouble();
-                Rectangle tmpRect = new Rectangle();
-                tmpRect = rectangles[i];
-                tmpRect.X = x;
-                tmpRect.Y = y;
+                //double rotation = rnd.NextDouble();
+                //Rectangle tmpRect = new Rectangle();
+                //tmpRect = rectangles[i];
+                //tmpRect.X = x;
+                //tmpRect.Y = y;
 
 
-                GameTools.randomColor(ref floorToyColor, 255);
-                tmpColor = floorToyColor;
-                while (floorToyColor == tmpColor)
-                {
-                    GameTools.randomColor(ref floorToyColor, 255);
-                }
-                GameTools.randomColor(ref tmpColor, 255);
-                BasicComponent tmp = new BasicComponent(this.Game, textures[i], tmpRect, floorToyColor, (float)rotation);
-                tmp.ComponentType = "toy" + Convert.ToString(i);
-                floorToys.Add(tmp);
-                if ((y + tmpRect.Height) < (mannRect.Y + mannRect.Height))
-                    floorToysB.Add(tmp);
-                else
-                    floorToysI.Add(tmp);
+                //GameTools.randomColor(ref floorToyColor, 255);
+                //tmpColor = floorToyColor;
+                //while (floorToyColor == tmpColor)
+                //{
+                //    GameTools.randomColor(ref floorToyColor, 255);
+                //}
+                //GameTools.randomColor(ref tmpColor, 255);
+                //BasicComponent tmp = new BasicComponent(this.Game, textures[i], tmpRect, floorToyColor, (float)rotation);
+                //tmp.ComponentType = "toy" + Convert.ToString(i);
+                //floorToys.Add(tmp);
+                //if ((y + tmpRect.Height) < (mannRect.Y + mannRect.Height))
+                //    floorToysB.Add(tmp);
+                //else
+                //    floorToysI.Add(tmp);
+               
+                    addFloorToy(rectangles[i], textures[i], i);
+
+                
 
             }
 
@@ -281,7 +285,14 @@ namespace WindowsPhoneGame1.Scenes
             tmpRect.X = x;
             tmpRect.Y = y;
 
-            BasicComponent tmp = new BasicComponent(this.Game, text, tmpRect, (float)rotation);
+            GameTools.randomColor(ref floorToyColor, 255);
+            tmpColor = floorToyColor;
+            while (floorToyColor == tmpColor)
+            {
+                GameTools.randomColor(ref floorToyColor, 255);
+            }
+            GameTools.randomColor(ref tmpColor, 255);
+            BasicComponent tmp = new BasicComponent(this.Game, text, tmpRect, floorToyColor, (float)rotation);
             tmp.ComponentType = "toy" + Convert.ToString(toyNumber);
             floorToys.Add(tmp);
             if ((y + tmpRect.Height) < (mannRect.Y + mannRect.Height))

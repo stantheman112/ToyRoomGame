@@ -30,7 +30,7 @@ namespace WindowsPhoneGame1.Scenes
         SpriteBatch spriteBatch;
         Texture2D loadScreen;        
         Texture2D mannTexture, mannTexture2, mannTexture3, basketLeftTxt, roomTexture, guiBubbleTxt;
-        Rectangle mannRect, mannRect2, mannRect3,  basketLeftRect, defaultRect, roomRect, guiBubbleRct;
+        Rectangle mannRect, mannRect2, mannRect3, basketLeftRect, defaultRect, roomRect, guiBubbleRct, bskHit;
         List<BasicComponent> floorToysB, floorToysI, floorToys;
         GameGUI talkingBubble;
         List<Color> colorList = new List<Color>();
@@ -104,6 +104,7 @@ namespace WindowsPhoneGame1.Scenes
             guiBubbleRct = new Rectangle(210,-1, 400, 300);
            
             basketLeftRect = new Rectangle(0, 320, 250, 150);
+            bskHit = new Rectangle(35, 390, 180, 80); 
         
             roomRect = new Rectangle(-170, -20, 1140, 620);
            
@@ -124,6 +125,9 @@ namespace WindowsPhoneGame1.Scenes
             rectangles.Add(new Rectangle(515, 245, 70, 70)); //block
             rectangles.Add(new Rectangle(505, 210, 100, 100));//ball
             rectangles.Add(new Rectangle(520, 180, 100, 150)); //balloon
+            rectangles.Add(new Rectangle(510, 200, 130, 130));//horse
+            rectangles.Add(new Rectangle(510, 200, 130, 130));//pad
+            rectangles.Add(new Rectangle(510, 200, 130, 130));//racecar
 
 
            
@@ -145,7 +149,7 @@ namespace WindowsPhoneGame1.Scenes
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            loadScreen = Content.Load<Texture2D>("Images\\loadscreen");
+            loadScreen = Content.Load<Texture2D>("Images\\gui\\loadscreen");
 
             spriteBatch.Begin();
 
@@ -176,7 +180,10 @@ namespace WindowsPhoneGame1.Scenes
             textures.Add(Content.Load<Texture2D>("Images\\colored\\teddy"));
             textures.Add(Content.Load<Texture2D>("Images\\colored\\block"));
             textures.Add(Content.Load<Texture2D>("Images\\colored\\ball"));
-            textures.Add(Content.Load<Texture2D>("Images\\colored\\balloon"));
+            textures.Add(Content.Load<Texture2D>("Images\\colored\\balloon")); 
+            textures.Add(Content.Load<Texture2D>("Images\\colored\\horse"));
+            textures.Add(Content.Load<Texture2D>("Images\\colored\\pad"));
+            textures.Add(Content.Load<Texture2D>("Images\\colored\\racecar"));
            
 
             basketLeftTxt = Content.Load<Texture2D>("Images\\wheelBasket");
@@ -234,9 +241,10 @@ namespace WindowsPhoneGame1.Scenes
                Components.Add(floorToysI[b]);
            }
           
-          Components.Add(basketLeft);
+      
            
             Components.Add(toy);
+            Components.Add(basketLeft);
             Components.Add(talkingBubble);
             numberOfTurns = textures.Count;
             base.LoadContent();
@@ -364,7 +372,7 @@ namespace WindowsPhoneGame1.Scenes
                 boy.ComponentRectangle = mannRect;
                 
             }
-            if (toy.ComponentRectangle.Intersects(basketLeft.ComponentRectangle))
+            if (toy.ComponentRectangle.Intersects(bskHit))
             {
                 toysCased++;
                 boy.ComponentTexture = mannTexture3;
