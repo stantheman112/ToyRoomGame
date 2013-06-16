@@ -124,6 +124,9 @@ namespace WindowsPhoneGame1.Scenes
             rectangles.Add(new Rectangle(310, 225, 70, 70)); //block
             rectangles.Add(new Rectangle(310, 190, 100, 100));//ball
             rectangles.Add(new Rectangle(330, 140, 100, 150)); //balloon
+            rectangles.Add(new Rectangle(530, 200, 130, 120)); //pad
+            rectangles.Add(new Rectangle(310, 150, 120, 120)); //horse
+            rectangles.Add(new Rectangle(310, 200, 120, 90)); //racecar
 
             newRectangles = new List<Rectangle>();
             newRectangles.AddRange(rectangles);
@@ -204,6 +207,9 @@ namespace WindowsPhoneGame1.Scenes
             textures.Add(Content.Load<Texture2D>("Images\\block"));
             textures.Add(Content.Load<Texture2D>("Images\\ball"));
             textures.Add(Content.Load<Texture2D>("Images\\balloon"));
+            textures.Add(Content.Load<Texture2D>("Images\\pad"));
+            textures.Add(Content.Load<Texture2D>("Images\\horse"));
+            textures.Add(Content.Load<Texture2D>("Images\\racecar"));
             newTextures.AddRange(textures);
             basketTxt = Content.Load<Texture2D>("Images\\wheelBasket");
 

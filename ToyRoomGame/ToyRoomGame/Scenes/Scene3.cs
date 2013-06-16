@@ -123,9 +123,13 @@ namespace WindowsPhoneGame1.Scenes
             rectangles.Add(new Rectangle(505, 230, 100, 90));//actionfigure
             rectangles.Add(new Rectangle(505, 230, 120, 120));//teddy
             rectangles.Add(new Rectangle(515, 245, 70, 70)); //block
+         
             rectangles.Add(new Rectangle(505, 210, 100, 100));//ball
             rectangles.Add(new Rectangle(520, 180, 100, 150)); //balloon
-
+            rectangles.Add(new Rectangle(530, 200, 130, 120)); //pad
+            rectangles.Add(new Rectangle(310, 150, 120, 120)); //horse
+            rectangles.Add(new Rectangle(310, 200, 120, 90)); //racecar
+          
 
             numberOfTurns = rectangles.Count;
           
@@ -157,7 +161,9 @@ namespace WindowsPhoneGame1.Scenes
             textures.Add(Content.Load<Texture2D>("Images\\block"));
             textures.Add(Content.Load<Texture2D>("Images\\ball"));
             textures.Add(Content.Load<Texture2D>("Images\\balloon"));
-
+            textures.Add(Content.Load<Texture2D>("Images\\colored\\pad"));
+            textures.Add(Content.Load<Texture2D>("Images\\horse"));
+            textures.Add(Content.Load<Texture2D>("Images\\racecar"));
             basketTxt = Content.Load<Texture2D>("Images\\wheelBasket");
 
             spriteFont = Content.Load<SpriteFont>("sf20");
