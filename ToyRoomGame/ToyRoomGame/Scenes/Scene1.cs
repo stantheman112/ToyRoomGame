@@ -28,9 +28,9 @@ namespace WindowsPhoneGame1.Scenes
         #region private variables
         GameData gameStorage;
         SpriteBatch spriteBatch;
-        Texture2D loadScreen;        
+        Texture2D loadScreen, basketOpeningTxt;        
         Texture2D mannTexture, mannTexture2, mannTexture3, basketLeftTxt, roomTexture, guiBubbleTxt;
-        Rectangle mannRect, mannRect2, mannRect3, basketLeftRect, defaultRect, roomRect, guiBubbleRct, bskHit;
+        Rectangle mannRect, mannRect2, mannRect3, basketLeftRect, defaultRect, roomRect, guiBubbleRct, bskHit, basketOpeningRct;
         List<BasicComponent> floorToysB, floorToysI, floorToys;
         GameGUI talkingBubble;
         List<Color> colorList = new List<Color>();
@@ -41,7 +41,7 @@ namespace WindowsPhoneGame1.Scenes
         int trigger = 90, timer = 0, toysCased=0, numberOfTurns,  nextTexture;
         MoveAbleComponent toy;
         SpriteFont spriteFont;
-        BasicComponent boy, basketLeft,  roomBackground;
+        BasicComponent boy, basketLeft,  roomBackground, basketOpening;
         ContentManager Content;
         GameComponentCollection Components;
         List<Rectangle> rectangles = new List<Rectangle>();
@@ -104,10 +104,11 @@ namespace WindowsPhoneGame1.Scenes
             guiBubbleRct = new Rectangle(210,-1, 400, 300);
            
             basketLeftRect = new Rectangle(0, 320, 250, 150);
+            basketOpeningRct = new Rectangle(60, 300, 250, 150);
             bskHit = new Rectangle(35, 390, 180, 80); 
         
             roomRect = new Rectangle(-170, -20, 1140, 620);
-           
+         
             
             //default toy størrelse
             defaultRect = new Rectangle(510, 200, 100, 90);
@@ -150,12 +151,13 @@ namespace WindowsPhoneGame1.Scenes
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             loadScreen = Content.Load<Texture2D>("Images\\gui\\loadscreen");
-
             spriteBatch.Begin();
 
-            spriteBatch.Draw(loadScreen, new Vector2(0, 0), Color.White);
+            spriteBatch.Draw(loadScreen, new Vector2(-90, -70), Color.White);
 
             spriteBatch.End();
+
+         
 
             GraphicsDevice.Present();
 
@@ -167,7 +169,8 @@ namespace WindowsPhoneGame1.Scenes
             mannTexture2 = Content.Load<Texture2D>("Images\\theBoyShowing");
             mannTexture3 = Content.Load<Texture2D>("Images\\boytup");
             roomTexture = Content.Load<Texture2D>("Images\\theroom");
-            guiBubbleTxt = Content.Load<Texture2D>("Images\\tlkBubble");      
+            guiBubbleTxt = Content.Load<Texture2D>("Images\\tlkBubble");
+            basketOpeningTxt = Content.Load<Texture2D>("Images\\wheelBasket2");
             textures.Add(Content.Load<Texture2D>("Images\\colored\\sportscar"));
             textures.Add(Content.Load<Texture2D>("Images\\colored\\theplane"));
             textures.Add(Content.Load<Texture2D>("Images\\colored\\train"));
@@ -184,17 +187,17 @@ namespace WindowsPhoneGame1.Scenes
             textures.Add(Content.Load<Texture2D>("Images\\colored\\horse"));
             textures.Add(Content.Load<Texture2D>("Images\\colored\\pad"));
             textures.Add(Content.Load<Texture2D>("Images\\colored\\racecar"));
-           
 
-            basketLeftTxt = Content.Load<Texture2D>("Images\\wheelBasket");
+
+            basketLeftTxt = Content.Load<Texture2D>("Images\\wheelBasket1");
       
             spriteFont = Content.Load<SpriteFont>("sf20");
             spriteFont.LineSpacing = 25;
             spriteFont.Spacing = 1;
 
             boy = new BasicComponent(this.Game, mannTexture, mannRect, 0f);
-            basketLeft = new BasicComponent(this.Game, basketLeftTxt, basketLeftRect, Color.DarkOrange, 0.0f);
-
+            basketLeft = new BasicComponent(this.Game, basketLeftTxt, basketLeftRect, Color.LightBlue, 0.0f);
+            basketOpening = new BasicComponent(this.Game, basketOpeningTxt, basketOpeningRct, Color.LightBlue, 0.0f);
             roomBackground = new BasicComponent(this.Game, roomTexture, roomRect, Color.White, 0.0f);
             toy = new MoveAbleComponent(this.Game, textures[0], defaultRect, Color.White, 0.0f);
             talkingBubble = new GameGUI(this.Game, spriteFont, new Vector2(220, 120), "Hello friend \n will you help  me \n clean my room?", Color.Black, 0f, new Vector2(0, 0), 1f, 0f);
@@ -240,12 +243,13 @@ namespace WindowsPhoneGame1.Scenes
 
                Components.Add(floorToysI[b]);
            }
-          
-      
+
+           Components.Add(basketOpening);
            
             Components.Add(toy);
             Components.Add(basketLeft);
             Components.Add(talkingBubble);
+          
             numberOfTurns = textures.Count;
             base.LoadContent();
         }
@@ -254,7 +258,7 @@ namespace WindowsPhoneGame1.Scenes
 
             Components.Remove(roomBackground);
            // Components.Remove(gameGUI);
-           
+         
             Components.Remove(boy);
 
             Components.Remove(basketLeft);
@@ -270,7 +274,7 @@ namespace WindowsPhoneGame1.Scenes
         {
 
 
-          
+            basketOpening.CompRectX = basketLeft.CompRectX+20;
             if(  basketLeft.CompRectX >=-50 && accelReading.Y  >0.0f)
             basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * -20);
             if (basketLeft.CompRectX <= 590 && accelReading.Y  < 0.0f)
@@ -398,7 +402,7 @@ namespace WindowsPhoneGame1.Scenes
             base.Update(gameTime);
         }
 
-
+      
 
 
 
