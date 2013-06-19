@@ -104,7 +104,7 @@ namespace WindowsPhoneGame1.Scenes
             guiBubbleRct = new Rectangle(210,-1, 400, 300);
            
             basketLeftRect = new Rectangle(0, 320, 250, 150);
-            basketOpeningRct = new Rectangle(60, 300, 250, 150);
+            basketOpeningRct = new Rectangle(25, 305, 250, 150);
             bskHit = new Rectangle(35, 390, 180, 80); 
         
             roomRect = new Rectangle(-170, -20, 1140, 620);
@@ -116,19 +116,23 @@ namespace WindowsPhoneGame1.Scenes
             rectangles.Add(new Rectangle(510, 230, 120, 90)); //sportscar
             rectangles.Add(new Rectangle(530, 200, 130, 120)); //plane
             rectangles.Add(new Rectangle(510, 220, 130, 90));//train
+
             rectangles.Add(new Rectangle(510, 240, 120, 90)); //tractor
             rectangles.Add(new Rectangle(510, 220, 120, 120)); //digger
             rectangles.Add(new Rectangle(510, 200, 130, 130)); //dino
+
             rectangles.Add(new Rectangle(505, 210, 120, 120)); //baby
             rectangles.Add(new Rectangle(505, 180, 120, 120)); //soldier
             rectangles.Add(new Rectangle(505, 230, 100, 90));//actionfigure
+
             rectangles.Add(new Rectangle(505, 230, 120, 120));//teddy
             rectangles.Add(new Rectangle(515, 245, 70, 70)); //block
-            rectangles.Add(new Rectangle(505, 210, 100, 100));//ball
+            rectangles.Add(new Rectangle(510, 220, 75, 75));//ball
+
             rectangles.Add(new Rectangle(520, 180, 100, 150)); //balloon
             rectangles.Add(new Rectangle(510, 200, 130, 130));//horse
             rectangles.Add(new Rectangle(510, 200, 130, 130));//pad
-            rectangles.Add(new Rectangle(510, 200, 130, 130));//racecar
+            rectangles.Add(new Rectangle(510, 220, 130, 100));//racecar
 
 
            
@@ -171,18 +175,23 @@ namespace WindowsPhoneGame1.Scenes
             roomTexture = Content.Load<Texture2D>("Images\\theroom");
             guiBubbleTxt = Content.Load<Texture2D>("Images\\tlkBubble");
             basketOpeningTxt = Content.Load<Texture2D>("Images\\wheelBasket2");
+
             textures.Add(Content.Load<Texture2D>("Images\\colored\\sportscar"));
             textures.Add(Content.Load<Texture2D>("Images\\colored\\theplane"));
             textures.Add(Content.Load<Texture2D>("Images\\colored\\train"));
+
             textures.Add(Content.Load<Texture2D>("Images\\colored\\tractor"));
             textures.Add(Content.Load<Texture2D>("Images\\colored\\digger"));
             textures.Add(Content.Load<Texture2D>("Images\\colored\\dino"));
+
             textures.Add(Content.Load<Texture2D>("Images\\colored\\baby"));
             textures.Add(Content.Load<Texture2D>("Images\\colored\\soldier"));
             textures.Add(Content.Load<Texture2D>("Images\\colored\\actionFigure"));
+
             textures.Add(Content.Load<Texture2D>("Images\\colored\\teddy"));
             textures.Add(Content.Load<Texture2D>("Images\\colored\\block"));
             textures.Add(Content.Load<Texture2D>("Images\\colored\\ball"));
+
             textures.Add(Content.Load<Texture2D>("Images\\colored\\balloon")); 
             textures.Add(Content.Load<Texture2D>("Images\\colored\\horse"));
             textures.Add(Content.Load<Texture2D>("Images\\colored\\pad"));
@@ -273,8 +282,8 @@ namespace WindowsPhoneGame1.Scenes
         public override void Update(GameTime gameTime)
         {
 
-
-            basketOpening.CompRectX = basketLeft.CompRectX+20;
+            Debug.WriteLine(accelReading);
+            basketOpening.CompRectX = basketLeft.CompRectX+15;
             if(  basketLeft.CompRectX >=-50 && accelReading.Y  >0.0f)
             basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * -20);
             if (basketLeft.CompRectX <= 590 && accelReading.Y  < 0.0f)
