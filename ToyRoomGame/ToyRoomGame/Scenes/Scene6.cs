@@ -36,7 +36,7 @@ namespace WindowsPhoneGame1.Scenes
         Color rightBsktColor = Color.Red, leftBsktColor = Color.White, itemColor = Color.Wheat, rightColor, wrongColor, tmpColor, floorToyColor;
         Random rnd;
         bool itemPlaced = false, firstRun = true, sceneCompleted=false;
-        int trigger = 90, timer = 0, toysCased = 0, numberOfTurns, maxScore = 20, newRand;
+        int trigger = 90, timer = 0, toysCased = 0, numberOfTurns, maxScore = 20, newRand, rollDirection;
         MoveAbleComponent toy;
         SpriteFont spriteFont;
         BasicComponent boy, basketLeft,  roomBackground;
@@ -314,13 +314,33 @@ namespace WindowsPhoneGame1.Scenes
             }
         }
 
+        private void basketRoll()
+        {
 
+            if (this.Game.Window.CurrentOrientation.ToString() == "LandscapeLeft")
+            {
+                rollDirection = -20;
+                if (basketLeft.CompRectX >= -50 && accelReading.Y > 0.0f)
+                    basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
+                if (basketLeft.CompRectX <= 590 && accelReading.Y < 0.0f)
+                    basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
+            }
+            else
+            {
+                rollDirection = 20;
+                if (basketLeft.CompRectX <= 590 && accelReading.Y > 0.0f)
+                    basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
+                if (basketLeft.CompRectX >= -50 && accelReading.Y < 0.0f)
+                    basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
+            }
+
+
+
+        }
+        
         public override void Update(GameTime gameTime)
         {
-            if (basketLeft.CompRectX >= -50 && accelReading.Y > 0.0f)
-                basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * 20);
-            if (basketLeft.CompRectX <= 590 && accelReading.Y < 0.0f)
-                basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * -20);
+            basketRoll();
             if (somethingMoving == true)
             {
                 bool chkMoving = false;

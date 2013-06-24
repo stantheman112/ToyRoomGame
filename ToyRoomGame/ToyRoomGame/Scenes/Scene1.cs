@@ -38,7 +38,7 @@ namespace WindowsPhoneGame1.Scenes
         Color rightBsktColor = Color.Red, leftBsktColor = Color.White, itemColor = Color.Wheat;
         Random rnd;
         bool itemPlaced = false, firstRun = true, sceneCompleted=false;
-        int trigger = 90, timer = 0, toysCased=0, numberOfTurns,  nextTexture;
+        int trigger = 90, timer = 0, toysCased = 0, numberOfTurns, nextTexture, rollDirection;
         MoveAbleComponent toy;
         SpriteFont spriteFont;
         BasicComponent boy, basketLeft,  roomBackground, basketOpening;
@@ -51,6 +51,7 @@ namespace WindowsPhoneGame1.Scenes
         int basketAccel, speed = 1;
         Accelerometer accelSensor;
         Vector3 accelReading = new Vector3();
+        GraphicsDeviceManager graphics;
 
 
         #endregion 
@@ -277,17 +278,37 @@ namespace WindowsPhoneGame1.Scenes
             base.UnloadContent();
         }
 
-       
+        private void basketRoll()
+        {
+
+            if (this.Game.Window.CurrentOrientation.ToString() == "LandscapeLeft")
+            {
+                rollDirection = -20;
+                if (basketLeft.CompRectX >= -50 && accelReading.Y > 0.0f)
+                    basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
+                if (basketLeft.CompRectX <= 590 && accelReading.Y < 0.0f)
+                    basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
+            }
+            else
+            {
+                rollDirection = 20;
+                if (basketLeft.CompRectX <= 590 && accelReading.Y > 0.0f)
+                    basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
+                if (basketLeft.CompRectX >= -50 && accelReading.Y < 0.0f)
+                    basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
+            }
+
+            basketOpening.CompRectX = basketLeft.CompRectX + 15;
+            bskHit.X = basketLeft.CompRectX;
+          
+
+        }
 
         public override void Update(GameTime gameTime)
         {
 
-            Debug.WriteLine(accelReading);
-            basketOpening.CompRectX = basketLeft.CompRectX+15;
-            if(  basketLeft.CompRectX >=-50 && accelReading.Y  >0.0f)
-            basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * -20);
-            if (basketLeft.CompRectX <= 590 && accelReading.Y  < 0.0f)
-                basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * -20);
+
+            basketRoll();
            
             if (toysCased < numberOfTurns)
             {

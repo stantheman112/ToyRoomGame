@@ -38,7 +38,7 @@ namespace WindowsPhoneGame1.Scenes
         Color rightBsktColor = Color.Red, leftBsktColor = Color.White, itemColor = Color.Wheat;
         Random rnd;
         bool itemPlaced = false, firstRun = true, sceneCompleted=false;
-        int trigger = 90, timer = 0, toysCased=0, numberOfTurns,  nextTexture, newRand;
+        int trigger = 90, timer = 0, toysCased=0, numberOfTurns,  nextTexture, newRand, rollDirection;
         MoveAbleComponent toy;
         SpriteFont spriteFont;
         BasicComponent boy, basketLeft,  roomBackground;
@@ -278,18 +278,35 @@ namespace WindowsPhoneGame1.Scenes
             base.UnloadContent();
         }
 
-       
+        private void basketRoll()
+        {
+
+            if (this.Game.Window.CurrentOrientation.ToString() == "LandscapeLeft")
+            {
+                rollDirection = -20;
+                if (basketLeft.CompRectX >= -50 && accelReading.Y > 0.0f)
+                    basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
+                if (basketLeft.CompRectX <= 590 && accelReading.Y < 0.0f)
+                    basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
+            }
+            else
+            {
+                rollDirection = 20;
+                if (basketLeft.CompRectX <= 590 && accelReading.Y > 0.0f)
+                    basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
+                if (basketLeft.CompRectX >= -50 && accelReading.Y < 0.0f)
+                    basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
+            }
+
+
+
+        }
 
         public override void Update(GameTime gameTime)
         {
 
             numberOfTurns = textures.Count;
-          
-            if(  basketLeft.CompRectX >=-50 && accelReading.Y  >0.0f)
-            basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * 30);
-            if (basketLeft.CompRectX <= 590 && accelReading.Y  < 0.0f)
-                basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * 30);
-           
+            basketRoll();
             if (floorToys.Count==0)
             {
               //  gameStorage.saveScore(gameGUI.CurrentScore, gameGUI.MaxScore);

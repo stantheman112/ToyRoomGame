@@ -28,18 +28,18 @@ namespace WindowsPhoneGame1.Scenes
         #region private variables
         GameData gameStorage;
         SpriteBatch spriteBatch;
-        Texture2D mannTexture, mannTexture2, basketTxt, roomTexture, crayonTxt, guiBubbleTxt;
-        Rectangle mannRect, basketRightRect, basketLeftRect, defaultRect, roomRect, crayonRect, guiBubbleRct;
+        Texture2D mannTexture, mannTexture2, mannTexture3, basketTxt, roomTexture, crayonTxt, guiBubbleTxt, basketOpeningTxt;
+        Rectangle mannRect, bskHit, basketLeftRect,mannRect2, mannRect3, defaultRect, roomRect, crayonRect, guiBubbleRct, basketOpeningRct;
         GameGUI gameGUI;
         List<Color> colorList = new List<Color>();
         List<Texture2D> textures = new List<Texture2D>();
         Color rightBsktColor = Color.Red, leftBsktColor = Color.White, itemColor = Color.Wheat, rightColor, wrongColor, tmpColor, floorToyColor;
         Random rnd;
         bool itemPlaced = false, firstRun = true, sceneCompleted=false;
-        int trigger = 90, timer = 0, toysCased=0, numberOfTurns,  maxScore=20;
+        int trigger = 90, timer = 0, toysCased=0, numberOfTurns,  maxScore=20, rollDirection;
         MoveAbleComponent toy;
         SpriteFont spriteFont;
-        BasicComponent boy, basketLeft,  roomBackground;
+        BasicComponent boy, basketLeft, roomBackground, basketOpening;
         ContentManager Content;
         GameComponentCollection Components;
         List<Rectangle> rectangles = new List<Rectangle>();
@@ -49,6 +49,8 @@ namespace WindowsPhoneGame1.Scenes
         GameGUI talkingBubble;
         Accelerometer accelSensor;
         Vector3 accelReading = new Vector3();
+        GraphicsDeviceManager graphics;
+       
 
 
         #endregion 
@@ -92,19 +94,24 @@ namespace WindowsPhoneGame1.Scenes
         /// </summary>
         public override void Initialize()
         {
+
+            bskHit = new Rectangle(35, 390, 180, 80); 
             accelSensor = new Accelerometer();
             accelSensor.Start();
             accelSensor.ReadingChanged += accelSensor_ReadingChanged;
-
+        
             floorToysB = new List<BasicComponent>();
             floorToysI = new List<BasicComponent>();
             floorToys = new List<BasicComponent>();
-           
+
+            mannRect = new Rectangle(545, 80, 185, 370);
+            mannRect2 = new Rectangle(550, 80, 180, 370);
+            mannRect3 = new Rectangle(515, 80, 215, 370);
             spriteBatch = new SpriteBatch(Game.GraphicsDevice);
-            mannRect = new Rectangle(530, 60, 190, 370);
+         
             crayonRect = new Rectangle(0, 0, 50, 50);
-            basketLeftRect = new Rectangle(30, 350, 250, 130);
-            basketRightRect = new Rectangle(600, 350, 200, 100);
+            basketLeftRect = new Rectangle(0, 320, 250, 150);
+            basketOpeningRct = new Rectangle(25, 305, 250, 150);
             roomRect = new Rectangle(-30, -20, 900, 600);
             guiBubbleRct = new Rectangle(4, 31, 590, 410);
             //default toy størrelse
@@ -137,17 +144,21 @@ namespace WindowsPhoneGame1.Scenes
 
             base.Initialize();
         }
-      
 
+       
+           
+            
+        
         protected override void LoadContent()
         {
 
             mannTexture = Content.Load<Texture2D>("Images\\theBoy");
             mannTexture2 = Content.Load<Texture2D>("Images\\theBoyShowing");
+            mannTexture3 = Content.Load<Texture2D>("Images\\boytup");
             roomTexture = Content.Load<Texture2D>("Images\\theroom");
             crayonTxt = Content.Load<Texture2D>("Images\\crayon");
             guiBubbleTxt = Content.Load<Texture2D>("Images\\talkingBubbleLeft");
-
+            basketOpeningTxt = Content.Load<Texture2D>("Images\\wheelBasket2");
             textures.Add(Content.Load<Texture2D>("Images\\sportscar"));
             textures.Add(Content.Load<Texture2D>("Images\\theplane"));
             textures.Add(Content.Load<Texture2D>("Images\\train"));
@@ -164,7 +175,7 @@ namespace WindowsPhoneGame1.Scenes
             textures.Add(Content.Load<Texture2D>("Images\\colored\\pad"));
             textures.Add(Content.Load<Texture2D>("Images\\horse"));
             textures.Add(Content.Load<Texture2D>("Images\\racecar"));
-            basketTxt = Content.Load<Texture2D>("Images\\wheelBasket");
+            basketTxt = Content.Load<Texture2D>("Images\\wheelBasket1");
 
             spriteFont = Content.Load<SpriteFont>("sf20");
             talkingBubble = new GameGUI(this.Game, spriteFont, new Vector2(70, 100), "Kasper! \n the toycolors have gone \n crazy again! " +
@@ -180,15 +191,8 @@ namespace WindowsPhoneGame1.Scenes
             gameGUI = new GameGUI(this.Game, spriteFont, new Vector2(10,50), "0/"+numberOfTurns.ToString(), Color.Black);
             gameGUI.MaxScore = rectangles.Count;
             Components.Add(roomBackground);
-      
-            for (int i = 0; i < 5; i++)
-            {
-                MoveAbleComponent crayonTemp = new MoveAbleComponent(this.Game, crayonTxt, crayonRect, colorList[i], 0.0f);
-                crayonTemp.ItemDraw = true;
-                crayonRect.X += 155;
-                crayons.Add(crayonTemp);
-                Components.Add(crayonTemp);
-            }
+            basketOpening = new BasicComponent(this.Game, basketOpeningTxt, basketOpeningRct, Color.White, 0.0f);
+           
 
             for (int i = 0; i < textures.Count; i++)
             {
@@ -231,9 +235,18 @@ namespace WindowsPhoneGame1.Scenes
 
                 Components.Add(floorToysI[b]);
             }
-          
-            Components.Add(basketLeft);           
+            Components.Add(basketOpening);    
+                 
             Components.Add(toy);
+            Components.Add(basketLeft);
+            for (int i = 0; i < 5; i++)
+            {
+                MoveAbleComponent crayonTemp = new MoveAbleComponent(this.Game, crayonTxt, crayonRect, colorList[i], 0.0f);
+                crayonTemp.ItemDraw = true;
+                crayonRect.X += 155;
+                crayons.Add(crayonTemp);
+                Components.Add(crayonTemp);
+            }
             Components.Add(talkingBubble);
 
             base.LoadContent();
@@ -244,9 +257,10 @@ namespace WindowsPhoneGame1.Scenes
             Components.Remove(roomBackground);
             Components.Remove(gameGUI);
             Components.Remove(boy);
-            Components.Remove(basketLeft);
-          //  Components.Remove(basketRight);
+       
+            Components.Add(basketOpening);
             Components.Remove(toy);
+            Components.Remove(basketLeft);
             foreach(MoveAbleComponent mc in crayons)
                 Components.Remove(mc);
             base.UnloadContent();
@@ -265,19 +279,42 @@ namespace WindowsPhoneGame1.Scenes
                 {
                     toy.ItemTouched = false;
                 }
-                if (mc.ComponentRectangle.Intersects(basketLeftRect))
+                if (mc.ComponentRectangle.Intersects(bskHit))
                     basketLeft.ComponentColor = mc.ComponentColor;
                 
             }
+        }
+        private void basketRoll()
+        {
+           
+            if (this.Game.Window.CurrentOrientation.ToString() == "LandscapeLeft")
+            {
+                rollDirection = -20;
+                if (basketLeft.CompRectX >= -50 && accelReading.Y > 0.0f)
+                    basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
+                if (basketLeft.CompRectX <= 590 && accelReading.Y < 0.0f)
+                    basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
+            }
+            else
+            {
+                rollDirection = 20;
+                if (basketLeft.CompRectX <= 590 && accelReading.Y > 0.0f)
+                    basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
+                if (basketLeft.CompRectX >= -50 && accelReading.Y < 0.0f)
+                    basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
+            }
+
+            basketOpening.CompRectX = basketLeft.CompRectX + 15;
+            bskHit.X = basketLeft.CompRectX;
+            basketOpening.ComponentColor = basketLeft.ComponentColor;
+           
         }
         
 
         public override void Update(GameTime gameTime)
         {
-            if (basketLeft.CompRectX >= -50 && accelReading.Y > 0.0f)
-                basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * -20);
-            if (basketLeft.CompRectX <= 590 && accelReading.Y < 0.0f)
-                basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * -20);
+            basketRoll();
+         
             if (somethingMoving == true)
             {
                 bool chkMoving = false;
@@ -421,15 +458,21 @@ namespace WindowsPhoneGame1.Scenes
                 }
 
             }
-            if (toy.ItemTaken == true)
+            if (toy.ItemTaken == true && boy.ComponentTexture != mannTexture3)
+            {
                 boy.ComponentTexture = mannTexture;
-            if (toy.ComponentRectangle.Intersects(basketLeft.ComponentRectangle))
+                boy.ComponentRectangle = mannRect;
+
+            }
+            if (toy.ComponentRectangle.Intersects(bskHit))
             {
                 toysCased++;
                 if (toy.ComponentColor == basketLeft.ComponentColor)
                 {
                     gameGUI.CurrentScore = gameGUI.CurrentScore+1;
                     gameGUI.InfoText = gameGUI.CurrentScore.ToString() + "/" + maxScore.ToString();
+                    boy.ComponentTexture = mannTexture3;
+                    boy.ComponentRectangle = mannRect3;
                 }
                 else
                 {

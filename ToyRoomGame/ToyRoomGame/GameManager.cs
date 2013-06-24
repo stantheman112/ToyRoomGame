@@ -60,8 +60,10 @@ namespace WindowsPhoneGame1
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            graphics.SupportedOrientations = DisplayOrientation.LandscapeRight |
 
-
+                              DisplayOrientation.LandscapeLeft;
+                                 
 
 
             base.Initialize();
