@@ -28,7 +28,7 @@ namespace WindowsPhoneGame1.Scenes
         #region private variables
         GameData gameStorage;
         SpriteBatch spriteBatch;
-        Texture2D mannTexture, mannTexture2, mannTexture3, basketTxt, roomTexture, guiBubbleTxt, basketOpeningTxt;
+        Texture2D mannTexture, mannTexture2, mannTexture3,  boyDissapointedTxt, basketTxt, roomTexture, guiBubbleTxt, basketOpeningTxt;
         Rectangle mannRect, mannRect2, mannRect3, basketLeftRect, basketRightRect, defaultRect, roomRect, guiBubbleRct, basketOpeningLRct, basketOpeningRRct,  bskHitL, bskHitR;
         List<BasicComponent> floorToysB, floorToysI, floorToys;
         GameGUI gameGUI;
@@ -102,7 +102,7 @@ namespace WindowsPhoneGame1.Scenes
             floorToys = new List<BasicComponent>();
             spriteBatch = new SpriteBatch(Game.GraphicsDevice);
             mannRect = new Rectangle(345, 10, 185, 370);
-            mannRect2 = new Rectangle(350, 10, 180, 370);
+            mannRect2 = new Rectangle(353, 10, 175, 370);
             mannRect3 = new Rectangle(315, 10, 215, 370);
             guiBubbleRct = new Rectangle(10, 2, 400, 500);
          
@@ -155,6 +155,7 @@ namespace WindowsPhoneGame1.Scenes
             mannTexture = Content.Load<Texture2D>("Images\\theBoy");
             mannTexture2 = Content.Load<Texture2D>("Images\\theBoyShowing");
             mannTexture3 = Content.Load<Texture2D>("Images\\boytup");
+            boyDissapointedTxt = Content.Load<Texture2D>("Images\\boytdown");
             roomTexture = Content.Load<Texture2D>("Images\\theroom");
             guiBubbleTxt = Content.Load<Texture2D>("Images\\talkingBubbleLeft");
             basketOpeningTxt = Content.Load<Texture2D>("Images\\wheelBasket2");
@@ -386,7 +387,7 @@ namespace WindowsPhoneGame1.Scenes
                 }
 
             }
-            if (toy.ItemTaken == true && boy.ComponentTexture != mannTexture3)
+            if (toy.ItemTaken == true && boy.ComponentTexture != mannTexture3 && boy.ComponentTexture != boyDissapointedTxt)
             {
                 boy.ComponentTexture = mannTexture;
                 boy.ComponentRectangle = mannRect;
@@ -405,7 +406,8 @@ namespace WindowsPhoneGame1.Scenes
                 }
                 else
                 {
-                    //spill av animasjon på at gutten blir oppgitt? 
+                    boy.ComponentTexture = boyDissapointedTxt;
+                    boy.ComponentRectangle = mannRect3;
                 }
                  
                 itemPlaced = true;
@@ -427,7 +429,8 @@ namespace WindowsPhoneGame1.Scenes
                 }
                 else
                 {
-                    //spill av animasjon på at gutten blir oppgitt? 
+                    boy.ComponentTexture = boyDissapointedTxt;
+                    boy.ComponentRectangle = mannRect3;
                 }
                 itemPlaced = true;
                 timer = 0;
