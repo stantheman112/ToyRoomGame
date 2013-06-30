@@ -306,7 +306,23 @@ namespace WindowsPhoneGame1.Scenes
 
         public override void Update(GameTime gameTime)
         {
+            bool passedBasket = false;
+            if (toy.CompRectX <= (basketLeft.CompRectX + basketLeftRect.Width-20) )
+            {
+                passedBasket = true;
+            }
+            else { 
+                passedBasket = false;
+            }
 
+            if (toy.CompRectX<= (basketLeft.CompRectX + basketLeftRect.Width) && (toy.CompRectY+toy.ComponentRectangle.Height)>=basketLeft.CompRectY && passedBasket==false)
+            {
+
+              //  if( toy.CompRectX>=(basketLeft.CompRectX+basketLeftRect.Width)){
+                toy.CompRectX = basketLeft.CompRectX + basketLeftRect.Width;
+               // } else {
+               // }
+            }
 
             basketRoll();
            
