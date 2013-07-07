@@ -23,28 +23,28 @@ namespace WindowsPhoneGame1.Scenes
     /// <summary>
     /// This is a game component that implements IUpdateable.
     /// </summary>
-    public class Scene3 : Microsoft.Xna.Framework.DrawableGameComponent
+    public class Scene3 : MasterScene
     {
         #region private variables
         GameData gameStorage;
         SpriteBatch spriteBatch;
-        Texture2D mannTexture, mannTexture2, mannTexture3, basketTxt, boyDissapointedTxt, roomTexture, crayonTxt, guiBubbleTxt, basketOpeningTxt;
-        Rectangle mannRect, bskHit, basketLeftRect,mannRect2, mannRect3, defaultRect, roomRect, crayonRect, guiBubbleRct, basketOpeningRct;
+    //    Texture2D mannTexture, mannTexture2, mannTexture3, basketTxt, boyDissapointedTxt, roomTexture, crayonTxt, guiBubbleTxt, basketOpeningTxt;
+     //   Rectangle mannRect, bskHit, basketLeftRect,mannRect2, mannRect3, defaultRect, roomRect, crayonRect, guiBubbleRct, basketOpeningRct;
         GameGUI gameGUI;
         List<Color> colorList = new List<Color>();
-        List<Texture2D> textures = new List<Texture2D>();
+       
         Color rightBsktColor = Color.Red, leftBsktColor = Color.White, itemColor = Color.Wheat, rightColor, wrongColor, tmpColor, floorToyColor;
-        Random rnd;
+     
         bool itemPlaced = false, firstRun = true, sceneCompleted=false;
         int trigger = 90, timer = 0, toysCased=0, numberOfTurns,  maxScore=20, rollDirection;
-        MoveAbleComponent toy;
+      //  MoveAbleComponent toy;
         SpriteFont spriteFont;
-        BasicComponent boy, basketLeft, roomBackground, basketOpening;
+   //     BasicComponent boy, basketLeft, roomBackground, basketOpening;
         ContentManager Content;
         GameComponentCollection Components;
-        List<Rectangle> rectangles = new List<Rectangle>();
-        List<MoveAbleComponent> crayons = new List<MoveAbleComponent>();
-        List<BasicComponent> floorToysB, floorToysI, floorToys;
+     //   List<Rectangle> rectangles = new List<Rectangle>();
+     //   List<MoveAbleComponent> crayons = new List<MoveAbleComponent>();
+     //   List<BasicComponent> floorToysB, floorToysI, floorToys;
         private bool somethingMoving = false;
         GameGUI talkingBubble;
         Accelerometer accelSensor;
@@ -68,7 +68,7 @@ namespace WindowsPhoneGame1.Scenes
 
 
         public Scene3(Game game, ContentManager content, GameComponentCollection components)
-            : base(game)
+            : base(game, content, components )
         {
             Components = components;
             Content = content;
@@ -197,30 +197,32 @@ namespace WindowsPhoneGame1.Scenes
 
             for (int i = 0; i < textures.Count; i++)
             {
-                int x = rnd.Next(150, 750);
-                int y = rnd.Next(250, 400);
 
-                double rotation = rnd.NextDouble();
-                Rectangle tmpRect = new Rectangle();
-                tmpRect = rectangles[i];
-                tmpRect.X = x;
-                tmpRect.Y = y;
+                addFloorToy(i, i);
+                //int x = rnd.Next(150, 750);
+                //int y = rnd.Next(250, 400);
+
+                //double rotation = rnd.NextDouble();
+                //Rectangle tmpRect = new Rectangle();
+                //tmpRect = rectangles[i];
+                //tmpRect.X = x;
+                //tmpRect.Y = y;
 
 
-                GameTools.randomColor(ref floorToyColor, 255);
-                tmpColor = floorToyColor;
-                while (floorToyColor == tmpColor)
-                {
-                    GameTools.randomColor(ref floorToyColor, 255);
-                }
-                GameTools.randomColor(ref tmpColor, 255);
-                BasicComponent tmp = new BasicComponent(this.Game, textures[i], tmpRect, floorToyColor, (float)rotation);
-                tmp.ComponentType = "toy" + Convert.ToString(i);
-                floorToys.Add(tmp);
-                if ((y + tmpRect.Height) < (mannRect.Y + mannRect.Height))
-                    floorToysB.Add(tmp);
-                else
-                    floorToysI.Add(tmp);
+                //GameTools.randomColor(ref floorToyColor, 255);
+                //tmpColor = floorToyColor;
+                //while (floorToyColor == tmpColor)
+                //{
+                //    GameTools.randomColor(ref floorToyColor, 255);
+                //}
+                //GameTools.randomColor(ref tmpColor, 255);
+                //BasicComponent tmp = new BasicComponent(this.Game, textures[i], tmpRect, floorToyColor, (float)rotation);
+                //tmp.ComponentType = "toy" + Convert.ToString(i);
+                //floorToys.Add(tmp);
+                //if ((y + tmpRect.Height) < (mannRect.Y + mannRect.Height))
+                //    floorToysB.Add(tmp);
+                //else
+                //    floorToysI.Add(tmp);
 
             }
 
@@ -285,36 +287,15 @@ namespace WindowsPhoneGame1.Scenes
                 
             }
         }
-        private void basketRoll()
-        {
-           
-            if (this.Game.Window.CurrentOrientation.ToString() == "LandscapeLeft")
-            {
-                rollDirection = -20;
-                if (basketLeft.CompRectX >= -50 && accelReading.Y > 0.0f)
-                    basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
-                if (basketLeft.CompRectX <= 590 && accelReading.Y < 0.0f)
-                    basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
-            }
-            else
-            {
-                rollDirection = 20;
-                if (basketLeft.CompRectX <= 590 && accelReading.Y > 0.0f)
-                    basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
-                if (basketLeft.CompRectX >= -50 && accelReading.Y < 0.0f)
-                    basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
-            }
-
-            basketOpening.CompRectX = basketLeft.CompRectX + 15;
-            bskHit.X = basketLeft.CompRectX;
-            basketOpening.ComponentColor = basketLeft.ComponentColor;
-           
-        }
+        
         
 
         public override void Update(GameTime gameTime)
         {
             basketRoll();
+            basketCollisionHandling(basketLeft);
+
+           
          
             if (somethingMoving == true)
             {

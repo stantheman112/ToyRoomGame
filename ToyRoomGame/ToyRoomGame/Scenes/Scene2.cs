@@ -23,31 +23,31 @@ namespace WindowsPhoneGame1.Scenes
     /// <summary>
     /// This is a game component that implements IUpdateable.
     /// </summary>
-    public class Scene2 : Microsoft.Xna.Framework.DrawableGameComponent
+    public class Scene2 : MasterScene
     {
         #region private variables
         GameData gameStorage;
         SpriteBatch spriteBatch;
-        Texture2D mannTexture, mannTexture2, mannTexture3,  boyDissapointedTxt, basketTxt, roomTexture, guiBubbleTxt, basketOpeningTxt;
-        Rectangle mannRect, mannRect2, mannRect3, basketLeftRect, basketRightRect, defaultRect, roomRect, guiBubbleRct, basketOpeningLRct, basketOpeningRRct,  bskHitL, bskHitR;
+    //    Texture2D mannTexture, mannTexture2, mannTexture3,  boyDissapointedTxt, basketTxt, roomTexture, guiBubbleTxt, basketOpeningTxt, baskethitvisualTxt;
+     //   Rectangle mannRect, mannRect2, mannRect3, basketLeftRect, basketRightRect, defaultRect, roomRect, guiBubbleRct, basketOpeningLRct, basketOpeningRRct,  bskHitL, bskHitR;
         List<BasicComponent> floorToysB, floorToysI, floorToys;
         GameGUI gameGUI;
         List<Color> colorList = new List<Color>();
         List<Texture2D> textures = new List<Texture2D>();
         Color rightBsktColor = Color.Red, leftBsktColor = Color.White, itemColor = Color.Wheat, rightColor, wrongColor, tmpColor, floorToyColor;
-        Random rnd;
+   
         bool itemPlaced = false, firstRun = true, sceneCompleted=false;
         int trigger = 90, timer = 0, toysCased=0, numberOfTurns=3,  maxScore=20;
-        MoveAbleComponent toy;
+    //    MoveAbleComponent toy;
         SpriteFont spriteFont;
-        BasicComponent boy, basketLeft, basketRight, basketOpeningRight, basketOpeningLeft, roomBackground;
+      //  BasicComponent boy, basketLeft, basketRight, basketOpeningRight, basketOpeningLeft, roomBackground, baskethitvisualL, baskethitvisualR;
         ContentManager Content;
         GameComponentCollection Components;
         List<Rectangle> rectangles = new List<Rectangle>();
         GameGUI talkingBubble;
         Accelerometer accelSensor;
         Vector3 accelReading = new Vector3();
-
+      
 
         #endregion 
         #region public properties
@@ -64,7 +64,7 @@ namespace WindowsPhoneGame1.Scenes
 
 
         public Scene2(Game game, ContentManager content, GameComponentCollection components)
-            : base(game)
+            : base(game, content, components)
         {
             Components = components;
             Content = content;
@@ -76,12 +76,7 @@ namespace WindowsPhoneGame1.Scenes
             // TODO: Construct any child components here
         }
 
-      private void accelSensor_ReadingChanged(object sender, AccelerometerReadingEventArgs e)
-        {
-            accelReading.X = (float)e.X;
-            accelReading.Y = (float)e.Y;
-            accelReading.Z = (float)e.Z;
-        }
+      
         /// <summary>
         /// Allows the game component to perform any initialization it needs to before starting
         /// to run.  This is where it can query for any required services and load content.
@@ -137,6 +132,8 @@ namespace WindowsPhoneGame1.Scenes
            
             
            
+         
+
             basketLeftRect = new Rectangle(0, 340, 240, 140);
             basketRightRect = new Rectangle(550, 340, 240, 140);
             basketOpeningLRct = new Rectangle(15, 320, 245, 150);
@@ -159,8 +156,8 @@ namespace WindowsPhoneGame1.Scenes
             roomTexture = Content.Load<Texture2D>("Images\\theroom");
             guiBubbleTxt = Content.Load<Texture2D>("Images\\talkingBubbleLeft");
             basketOpeningTxt = Content.Load<Texture2D>("Images\\wheelBasket2");
-          
-            
+
+           
             textures.Add(Content.Load<Texture2D>("Images\\sportscar"));
             textures.Add(Content.Load<Texture2D>("Images\\theplane"));
             textures.Add(Content.Load<Texture2D>("Images\\train"));
@@ -190,6 +187,9 @@ namespace WindowsPhoneGame1.Scenes
             talkingBubble.GuiBackgroundRect = guiBubbleRct;
             talkingBubble.GuiBackgroundTxt = guiBubbleTxt;
             talkingBubble.GuiVisible = true;
+
+       //     baskethitvisualL = new BasicComponent(this.Game, baskethitvisualTxt, bskHitL, 0f);
+      //      baskethitvisualR = new BasicComponent(this.Game, baskethitvisualTxt, bskHitR, 0f);
 
             boy = new BasicComponent(this.Game, mannTexture, mannRect, 0f);
             basketLeft = new BasicComponent(this.Game, basketTxt, basketLeftRect, 0.0f);
@@ -252,6 +252,8 @@ namespace WindowsPhoneGame1.Scenes
             Components.Add(basketLeft);
             Components.Add(basketRight);
             Components.Add(talkingBubble);
+            //Components.Add(baskethitvisualL);
+            //Components.Add(baskethitvisualR);
             base.LoadContent();
         }
         protected override void UnloadContent()
@@ -268,9 +270,106 @@ namespace WindowsPhoneGame1.Scenes
             base.UnloadContent();
         }
 
+        ////sikrer at man må dra leken rett oppi kurven
+        //private void basketCollisionHandling(BasicComponent basket, bool leftside)
+        //{
+        //    if (leftside == true)
+        //    {
+        //        if (onTopOfBasket == true)
+        //        {
+        //            onTopOfBasket = true; leftOfBasket = false; rightOfBasket = false;
+        //        }
+        //        else
+        //        {
+        //            onTopOfBasket = false; leftOfBasket = false; rightOfBasket = true;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        if (onTopOfBasket == true)
+        //        {
+        //            onTopOfBasket = true; leftOfBasket = false; rightOfBasket = false;
+        //        }
+        //        else
+        //        {
+        //            onTopOfBasket = false; leftOfBasket = true; rightOfBasket = false;
+        //        }
+        //    }
+
+        //    if (toy.CompRectX <= (basket.CompRectX + basket.ComponentRectangle.Width) && toy.CompRectX >= basket.CompRectX && toy.CompRectY + toy.ComponentRectangle.Height < basket.CompRectY)
+        //    {
+        //        onTopOfBasket = true;
+        //        leftOfBasket = false;
+        //        rightOfBasket = false;
+        //    }
+        //    else
+        //    {
+        //        if (toy.ItemMoving == false)
+        //        {
+        //            onTopOfBasket = false;
+        //        }
+        //    }
+
+
+        //    if (toy.CompRectX > basket.CompRectX + basket.CompRectWidth)
+        //    {
+        //        rightOfBasket = true;
+        //        leftOfBasket = false;
+        //        onTopOfBasket = false;
+        //    }
+        //    else
+        //    {
+        //        if (toy.ItemMoving == false)
+        //            rightOfBasket = false;
+        //    }
+
+        //    if (toy.CompRectX + toy.CompRectWidth < basket.CompRectX)
+        //    {
+        //        leftOfBasket = true;
+        //        rightOfBasket = false;
+        //        onTopOfBasket = false;
+        //    }
+        //    else
+        //    {
+        //        if (toy.ItemMoving == false)
+        //            leftOfBasket = false;
+        //    }
+
+        //    if (toy.CompRectX - 10 <= (basket.CompRectX + basket.ComponentRectangle.Width) && (toy.CompRectY + toy.ComponentRectangle.Height) >= basket.CompRectY && onTopOfBasket == false && leftOfBasket == false && rightOfBasket == true)
+        //    {
+        //        toy.CompRectX = basket.CompRectX + basket.ComponentRectangle.Width + 10;
+        //    }
+
+        //    if (leftOfBasket == true && rightOfBasket == false)
+        //    {
+
+        //        if (toy.CompRectX + toy.ComponentRectangle.Width >= (basket.CompRectX - 10) && (toy.CompRectY + toy.ComponentRectangle.Height) >= basket.CompRectY && onTopOfBasket == false)
+        //        {
+        //            toy.CompRectX = basket.CompRectX - (toy.ComponentRectangle.Width + 10);
+        //        }
+
+        //    }
+        //    if (toy.ComponentRectangle.Intersects(basket.ComponentRectangle) && onTopOfBasket == true && leftOfBasket == false && rightOfBasket == false)
+        //        toy.CompRectX = basket.CompRectX + 105;
+
+
+
+
+        //    if (toy.CompRectX >= (basket.CompRectX) && (toy.CompRectY + toy.ComponentRectangle.Height) >= basket.CompRectY && onTopOfBasket == true)
+        //    {
+        //        toy.CompRectX = basket.CompRectX;
+        //    }
+
+        //}
+
+
         public override void Update(GameTime gameTime)
         {
-
+         
+            if(toy.CompRectX<360)
+              basketCollisionHandling(basketLeft, true);
+            else
+               basketCollisionHandling(basketRight, false);
             basketOpeningLeft.ComponentColor = basketLeft.ComponentColor;
             basketOpeningRight.ComponentColor = basketRight.ComponentColor;
             if (toysCased < numberOfTurns)

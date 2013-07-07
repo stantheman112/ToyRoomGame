@@ -23,36 +23,33 @@ namespace WindowsPhoneGame1.Scenes
     /// <summary>
     /// This is a game component that implements IUpdateable.
     /// </summary>
-    public class Scene1 : Microsoft.Xna.Framework.DrawableGameComponent
+    public class Scene1 : MasterScene
     {
         #region private variables
         GameData gameStorage;
         SpriteBatch spriteBatch;
-        Texture2D loadScreen, basketOpeningTxt;        
-        Texture2D mannTexture, mannTexture2, mannTexture3, basketLeftTxt, roomTexture, guiBubbleTxt;
-        Rectangle mannRect, mannRect2, mannRect3, basketLeftRect, defaultRect, roomRect, guiBubbleRct, bskHit, basketOpeningRct;
-        List<BasicComponent> floorToysB, floorToysI, floorToys;
+      //  Texture2D loadScreen, basketOpeningTxt, baskethitvisualTxt;        
+     //   Texture2D mannTexture, mannTexture2, mannTexture3, basketLeftTxt, roomTexture, guiBubbleTxt;
+      //  Rectangle mannRect, mannRect2, mannRect3, basketLeftRect, defaultRect, roomRect, guiBubbleRct, bskHit, basketOpeningRct;
+     //   List<BasicComponent> floorToysB, floorToysI, floorToys;
         GameGUI talkingBubble;
         List<Color> colorList = new List<Color>();
-        List<Texture2D> textures = new List<Texture2D>();
+     //   List<Texture2D> textures = new List<Texture2D>();
         Color rightBsktColor = Color.Red, leftBsktColor = Color.White, itemColor = Color.Wheat;
         Random rnd;
         bool itemPlaced = false, firstRun = true, sceneCompleted=false;
         int trigger = 90, timer = 0, toysCased = 0, numberOfTurns, nextTexture, rollDirection;
-        MoveAbleComponent toy;
+   //     MoveAbleComponent toy;
         SpriteFont spriteFont;
-        BasicComponent boy, basketLeft,  roomBackground, basketOpening;
+    //    BasicComponent boy, basketLeft,  roomBackground, basketOpening, baskethitvisual;
         ContentManager Content;
         GameComponentCollection Components;
         List<Rectangle> rectangles = new List<Rectangle>();
         List<int> toyTidiedUp;
-        SoundEffect backgroundMusic;
-        float basketSpeed = 0.1f;
-        int basketAccel, speed = 1;
-        Accelerometer accelSensor;
-        Vector3 accelReading = new Vector3();
+      //  SoundEffect backgroundMusic;
+      
         GraphicsDeviceManager graphics;
-
+        bool onTopOfBasket = false, leftOfBasket = false, rightOfBasket = false;
 
         #endregion 
         #region public properties
@@ -69,7 +66,7 @@ namespace WindowsPhoneGame1.Scenes
 
 
         public Scene1(Game game, ContentManager content, GameComponentCollection components)
-            : base(game)
+            : base(game, content, components)
         {
             Components = components;
             Content = content;
@@ -143,13 +140,7 @@ namespace WindowsPhoneGame1.Scenes
             base.Initialize();
         }
 
-        void accelSensor_ReadingChanged(object sender, AccelerometerReadingEventArgs e)
-        {
-            accelReading.X = (float)e.X;
-            accelReading.Y = (float)e.Y;
-            accelReading.Z = (float)e.Z;
-        }
-      
+       
 
         protected override void LoadContent()
         {
@@ -169,7 +160,7 @@ namespace WindowsPhoneGame1.Scenes
          //   SpriteTexture = Content.Load("mySprite");
 
             backgroundMusic = Content.Load<SoundEffect>("ToyRoom");
-
+         
             mannTexture = Content.Load<Texture2D>("Images\\theBoy");
             mannTexture2 = Content.Load<Texture2D>("Images\\theBoyShowing");
             mannTexture3 = Content.Load<Texture2D>("Images\\boytup");
@@ -204,7 +195,7 @@ namespace WindowsPhoneGame1.Scenes
             spriteFont = Content.Load<SpriteFont>("sf20");
             spriteFont.LineSpacing = 25;
             spriteFont.Spacing = 1;
-
+        //    baskethitvisual = new BasicComponent(this.Game, baskethitvisualTxt, bskHit, Color.Black, 0f);
             boy = new BasicComponent(this.Game, mannTexture, mannRect, 0f);
             basketLeft = new BasicComponent(this.Game, basketLeftTxt, basketLeftRect, Color.LightBlue, 0.0f);
             basketOpening = new BasicComponent(this.Game, basketOpeningTxt, basketOpeningRct, Color.LightBlue, 0.0f);
@@ -259,7 +250,7 @@ namespace WindowsPhoneGame1.Scenes
             Components.Add(toy);
             Components.Add(basketLeft);
             Components.Add(talkingBubble);
-          
+          //  Components.Add(baskethitvisual);
             numberOfTurns = textures.Count;
             base.LoadContent();
         }
@@ -278,53 +269,49 @@ namespace WindowsPhoneGame1.Scenes
             base.UnloadContent();
         }
 
-        private void basketRoll()
-        {
+        //private void basketRoll()
+        //{
+        //    if (basketLeft.CompRectX < -50)
+        //        basketLeft.CompRectX = 50;
+        //    if (basketLeft.CompRectX > 590)
+        //        basketLeft.CompRectX = 590;
 
-            if (this.Game.Window.CurrentOrientation.ToString() == "LandscapeLeft")
-            {
-                rollDirection = -20;
-                if (basketLeft.CompRectX >= -50 && accelReading.Y > 0.0f)
-                    basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
-                if (basketLeft.CompRectX <= 590 && accelReading.Y < 0.0f)
-                    basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
-            }
-            else
-            {
-                rollDirection = 20;
-                if (basketLeft.CompRectX <= 590 && accelReading.Y > 0.0f)
-                    basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
-                if (basketLeft.CompRectX >= -50 && accelReading.Y < 0.0f)
-                    basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
-            }
+        //    if (this.Game.Window.CurrentOrientation.ToString() == "LandscapeLeft")
+        //    {
+        //        rollDirection = -20;
+        //        if (basketLeft.CompRectX >= -50 && accelReading.Y > 0.0f)
+        //            basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
+        //        if (basketLeft.CompRectX <= 590 && accelReading.Y < 0.0f)
+        //            basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
+        //    }
+        //    else
+        //    {
+        //        rollDirection = 20;
+        //        if (basketLeft.CompRectX <= 590 && accelReading.Y > 0.0f)
+        //            basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
+        //        if (basketLeft.CompRectX >= -50 && accelReading.Y < 0.0f)
+        //            basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
+        //        if (basketLeft.CompRectX < -50)
+        //            basketLeft.CompRectX = 50;
 
-            basketOpening.CompRectX = basketLeft.CompRectX + 15;
-            bskHit.X = basketLeft.CompRectX;
+        //    }
+
+        //    basketOpening.CompRectX = basketLeft.CompRectX + 15;
+        //    bskHit.X = basketLeft.CompRectX+35;
+        //    baskethitvisual.ComponentRectangle = bskHit;
           
 
-        }
+        //}
 
+    
         public override void Update(GameTime gameTime)
         {
-            bool passedBasket = false;
-            if (toy.CompRectX <= (basketLeft.CompRectX + basketLeftRect.Width-20) )
-            {
-                passedBasket = true;
-            }
-            else { 
-                passedBasket = false;
-            }
 
-            if (toy.CompRectX<= (basketLeft.CompRectX + basketLeftRect.Width) && (toy.CompRectY+toy.ComponentRectangle.Height)>=basketLeft.CompRectY && passedBasket==false)
-            {
 
-              //  if( toy.CompRectX>=(basketLeft.CompRectX+basketLeftRect.Width)){
-                toy.CompRectX = basketLeft.CompRectX + basketLeftRect.Width;
-               // } else {
-               // }
-            }
+            
 
             basketRoll();
+            basketCollisionHandling(basketLeft);
            
             if (toysCased < numberOfTurns)
             {
@@ -404,7 +391,7 @@ namespace WindowsPhoneGame1.Scenes
 
                     catch (Exception ex)
                     {
-                        Debug.WriteLine(ex.Message);
+                        
 
                     }
             

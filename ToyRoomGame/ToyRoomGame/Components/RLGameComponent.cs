@@ -27,6 +27,7 @@ namespace WindowsPhoneGame1.Components
        protected Color componentColor = Color.White, leftBsktColor = Color.White, itemColor = Color.Wheat;
        protected TouchCollection touchCollection;
        protected float rotation;
+        public int ComponentNumber = 0;
        public string ComponentType { get; set; }
 
        #region public properties
