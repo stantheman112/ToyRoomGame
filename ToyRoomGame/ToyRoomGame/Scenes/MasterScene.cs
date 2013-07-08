@@ -27,37 +27,37 @@ namespace WindowsPhoneGame1.Scenes
     {
         #region private variables
         GameData gameStorage;
-        SpriteBatch spriteBatch;
+    protected    SpriteBatch spriteBatch;
       protected  Texture2D mannTexture, mannTexture2, mannTexture3, basketTxt, boyDissapointedTxt, roomTexture, crayonTxt, guiBubbleTxt, basketLeftTxt, basketOpeningTxt, loadScreen;
         protected Rectangle mannRect, bskHit, basketLeftRect, mannRect2, mannRect3, defaultRect, roomRect, crayonRect, guiBubbleRct, basketOpeningRct, basketRightRect, basketOpeningLRct, basketOpeningRRct, bskHitL, bskHitR ;
 
 
           
         GameGUI gameGUI;
-        List<Color> colorList = new List<Color>();
+     protected   List<Color> colorList = new List<Color>();
       protected  List<Texture2D> textures = new List<Texture2D>();
-        Color rightBsktColor = Color.Red, leftBsktColor = Color.White, itemColor = Color.Wheat, rightColor, wrongColor, tmpColor, floorToyColor;
+      protected  Color rightBsktColor = Color.Red, leftBsktColor = Color.White, itemColor = Color.Wheat, rightColor, wrongColor, tmpColor, floorToyColor;
       protected  Random rnd;
-        bool itemPlaced = false, firstRun = true, sceneCompleted=false;
-        int trigger = 90, timer = 0, toysCased=0, numberOfTurns,  maxScore=20, rollDirection;
+      protected  bool itemPlaced = false, firstRun = true, sceneCompleted=false;
+       protected int trigger = 90, timer = 0, toysCased=0, numberOfTurns,  maxScore=20, rollDirection, newRand, nextTexture;
       protected MoveAbleComponent toy;
-        SpriteFont spriteFont;
+      protected  SpriteFont spriteFont;
        protected BasicComponent boy, basketLeft, roomBackground, basketOpening, basketOpeningLeft, basketOpeningRight,basketRight ;
         ContentManager Content;
         GameComponentCollection Components;
      protected   List<Rectangle> rectangles = new List<Rectangle>();
-       protected List<MoveAbleComponent> crayons = new List<MoveAbleComponent>();
+       protected List<BasicComponent> crayons = new List<BasicComponent>();
         protected List<BasicComponent> floorToysB, floorToysI, floorToys;
         private bool somethingMoving = false;
-        GameGUI talkingBubble;
-        float basketSpeed = 0.1f;
+    protected    GameGUI talkingBubble;
+    protected    float basketSpeed = 0.1f;
       protected  int basketAccel, speed = 1;
         protected Accelerometer accelSensor;
         protected Vector3 accelReading = new Vector3();
         protected SoundEffect backgroundMusic;
 
         GraphicsDeviceManager graphics;
-        float rotationDirection;
+     protected   float rotationDirection;
 
        protected bool onTopOfBasket = false, leftOfBasket = false, rightOfBasket = false;
 
@@ -136,30 +136,34 @@ namespace WindowsPhoneGame1.Scenes
             Components.Add(basketOpening);
             Components.Remove(toy);
             Components.Remove(basketLeft);
-            foreach(MoveAbleComponent mc in crayons)
+            foreach(BasicComponent mc in crayons)
                 Components.Remove(mc);
             base.UnloadContent();
         }
 
-        private void arrangeCrayons()
+        protected void arrangeCrayons()
         {
-            foreach (MoveAbleComponent mc in crayons)
+            foreach (BasicComponent mc in crayons)
             {
-                if (mc.ItemMoving == false)
+            //    if (mc.ItemMoving == false)
+            //    {
+            //        mc.ItemTouched = false;
+            //        mc.resetToStart();
+            //    }
+            //    else
+            //    {
+            //        toy.ItemTouched = false;
+            //    }
+                if (mc.ComponentRectangle.Intersects(basketLeft.ComponentRectangle))
                 {
-                    mc.ItemTouched = false;
-                    mc.resetToStart();
-                }
-                else
-                {
-                    toy.ItemTouched = false;
-                }
-                if (mc.ComponentRectangle.Intersects(bskHit))
                     basketLeft.ComponentColor = mc.ComponentColor;
-                
+                    basketOpening.ComponentColor = mc.ComponentColor;
+                }
+
+
             }
         }
-       
+        
         protected BasicComponent addFloorToy(int compNumber, int toyNumber)
         {
             int x = rnd.Next(0, 650);
@@ -363,7 +367,23 @@ namespace WindowsPhoneGame1.Scenes
             }
 
         }
+        protected void loadScreenDraw(Texture2D text2d, Vector2 vect2)
+        {
+            spriteBatch = new SpriteBatch(GraphicsDevice);
 
+
+            spriteBatch.Begin();
+
+            spriteBatch.Draw(text2d, vect2, Color.White);
+
+            spriteBatch.End();
+
+
+
+            GraphicsDevice.Present();
+
+
+        }
 
 
 

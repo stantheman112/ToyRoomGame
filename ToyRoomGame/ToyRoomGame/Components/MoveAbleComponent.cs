@@ -21,7 +21,7 @@ namespace WindowsPhoneGame1.Components
     public class MoveAbleComponent : RLGameComponent
     {
         private TouchCollection touchCollection;
-        private bool itemTouched = false, itemDraw = false, itemTaken = false, itemMoving = false;
+        private bool itemTouched = false, itemTaken = false, itemMoving = false;
         private int mvSpeed = 20 , startX, startY; // sette i kontstruktør? 
         private bool movingAllowed = true;
 
@@ -54,17 +54,7 @@ namespace WindowsPhoneGame1.Components
                 itemTouched = value;
             }
     }
-        public bool ItemDraw
-        {
-            get
-            {
-                return itemDraw;
-            }
-            set
-            {
-                itemDraw = value;
-            }
-        }
+       
         public bool ItemTaken
         {
             get

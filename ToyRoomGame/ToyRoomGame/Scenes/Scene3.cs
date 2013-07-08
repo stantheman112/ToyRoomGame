@@ -244,7 +244,7 @@ namespace WindowsPhoneGame1.Scenes
             Components.Add(basketLeft);
             for (int i = 0; i < 4; i++)
             {
-                MoveAbleComponent crayonTemp = new MoveAbleComponent(this.Game, crayonTxt, crayonRect, colorList[i], 0.0f);
+                BasicComponent crayonTemp = new BasicComponent(this.Game, crayonTxt, crayonRect, colorList[i], 0.0f);
                 crayonTemp.ItemDraw = true;
                 crayonRect.X += 200;
                 crayons.Add(crayonTemp);
@@ -264,30 +264,12 @@ namespace WindowsPhoneGame1.Scenes
             Components.Add(basketOpening);
             Components.Remove(toy);
             Components.Remove(basketLeft);
-            foreach(MoveAbleComponent mc in crayons)
+            foreach(BasicComponent mc in crayons)
                 Components.Remove(mc);
             base.UnloadContent();
         }
 
-        private void arrangeCrayons()
-        {
-            foreach (MoveAbleComponent mc in crayons)
-            {
-                if (mc.ItemMoving == false)
-                {
-                    mc.ItemTouched = false;
-                    mc.resetToStart();
-                }
-                else
-                {
-                    toy.ItemTouched = false;
-                }
-                if (mc.ComponentRectangle.Intersects(bskHit))
-                    basketLeft.ComponentColor = mc.ComponentColor;
-                
-            }
-        }
-        
+      
         
 
         public override void Update(GameTime gameTime)
@@ -297,54 +279,54 @@ namespace WindowsPhoneGame1.Scenes
 
            
          
-            if (somethingMoving == true)
-            {
-                bool chkMoving = false;
-                if (toy.ItemMoving == true)
-                    chkMoving = true;
+            //if (somethingMoving == true)
+            //{
+            //    bool chkMoving = false;
+            //    if (toy.ItemMoving == true)
+            //        chkMoving = true;
 
-                for (int u = 0; u < crayons.Count; u++)
-                {
-                    if (crayons[u].ItemMoving == true)
-                        chkMoving = true;
-
-
-                }
-                if (chkMoving == false)
-                {
-                    for (int i = 0; i < crayons.Count; i++)
-                    {
-                        crayons[i].MovingAllowed = true;
-                    }
-                    toy.MovingAllowed = true;
+            //    for (int u = 0; u < crayons.Count; u++)
+            //    {
+            //        if (crayons[u].ItemMoving == true)
+            //            chkMoving = true;
 
 
-                }
-            }
+            //    }
+            //    if (chkMoving == false)
+            //    {
+            //        for (int i = 0; i < crayons.Count; i++)
+            //        {
+            //            crayons[i].MovingAllowed = true;
+            //        }
+            //        toy.MovingAllowed = true;
 
-            for (int i = 0; i < crayons.Count; i++)
-            {
-                if (crayons[i].ItemMoving == true)
-                {
-                    somethingMoving = true;
-                    toy.MovingAllowed = false;
-                    toy.CompRectY = 250;
-                    for (int y = 0; y < crayons.Count; y++)
-                    {
-                        if (y != i)
-                            crayons[y].MovingAllowed = false;
-                    }
-                }
-            }
+
+            //    }
+            //}
+
+            //for (int i = 0; i < crayons.Count; i++)
+            //{
+            //    if (crayons[i].ItemMoving == true)
+            //    {
+            //        somethingMoving = true;
+            //        toy.MovingAllowed = false;
+            //        toy.CompRectY = 250;
+            //        for (int y = 0; y < crayons.Count; y++)
+            //        {
+            //            if (y != i)
+            //                crayons[y].MovingAllowed = false;
+            //        }
+            //    }
+            //}
           
-            if (toy.ItemMoving)
-            {
-                 somethingMoving = true;
-                for (int i = 0; i < crayons.Count; i++)
-                {
-                    crayons[i].MovingAllowed = false;
-                }
-            }
+            //if (toy.ItemMoving)
+            //{
+            //     somethingMoving = true;
+            //    for (int i = 0; i < crayons.Count; i++)
+            //    {
+            //        crayons[i].MovingAllowed = false;
+            //    }
+            //}
            
             arrangeCrayons();
             if (toysCased < numberOfTurns)

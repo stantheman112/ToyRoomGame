@@ -38,7 +38,7 @@ namespace WindowsPhoneGame1.Scenes
         Color rightBsktColor = Color.Red, leftBsktColor = Color.White, itemColor = Color.Wheat;
         Random rnd;
         bool itemPlaced = false, firstRun = true, sceneCompleted=false;
-        int trigger = 90, timer = 0, toysCased = 0, numberOfTurns, nextTexture, rollDirection;
+     //   int trigger = 90, timer = 0, toysCased = 0, numberOfTurns, nextTexture, rollDirection;
    //     MoveAbleComponent toy;
         SpriteFont spriteFont;
     //    BasicComponent boy, basketLeft,  roomBackground, basketOpening, baskethitvisual;

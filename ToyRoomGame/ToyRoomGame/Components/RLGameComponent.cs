@@ -29,6 +29,7 @@ namespace WindowsPhoneGame1.Components
        protected float rotation;
         public int ComponentNumber = 0;
        public string ComponentType { get; set; }
+        protected bool itemDraw = false;
 
        #region public properties
        public Texture2D ComponentTexture
@@ -108,6 +109,17 @@ namespace WindowsPhoneGame1.Components
             get
             {
                 return componentRectangle.Height;
+            }
+        }
+        public bool ItemDraw
+        {
+            get
+            {
+                return itemDraw;
+            }
+            set
+            {
+                itemDraw = value;
             }
         }
        #endregion 

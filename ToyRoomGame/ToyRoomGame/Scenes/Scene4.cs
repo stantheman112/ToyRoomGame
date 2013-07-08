@@ -23,36 +23,36 @@ namespace WindowsPhoneGame1.Scenes
     /// <summary>
     /// This is a game component that implements IUpdateable.
     /// </summary>
-    public class Scene4 : Microsoft.Xna.Framework.DrawableGameComponent
+    public class Scene4 : MasterScene
     {
         #region private variables
-        GameData gameStorage;
-        SpriteBatch spriteBatch;
-        Texture2D loadScreen;        
-        Texture2D mannTexture, mannTexture2, mannTexture3, basketLeftTxt, roomTexture, guiBubbleTxt;
-        Rectangle mannRect, mannRect2, mannRect3,  basketLeftRect, defaultRect, roomRect, guiBubbleRct;
-        List<BasicComponent> floorToysB, floorToysI, floorToys;
-        GameGUI talkingBubble;
-        List<Color> colorList = new List<Color>();
-        List<Texture2D> textures = new List<Texture2D>();
-        Color rightBsktColor = Color.Red, leftBsktColor = Color.White, itemColor = Color.Wheat;
-        Random rnd;
-        bool itemPlaced = false, firstRun = true, sceneCompleted=false;
-        int trigger = 90, timer = 0, toysCased=0, numberOfTurns,  nextTexture, newRand, rollDirection;
-        MoveAbleComponent toy;
-        SpriteFont spriteFont;
-        BasicComponent boy, basketLeft,  roomBackground;
-        ContentManager Content;
-        GameComponentCollection Components;
-        List<Rectangle> rectangles = new List<Rectangle>();
-        List<int> toyTidiedUp;
-        SoundEffect backgroundMusic;
-        float basketSpeed = 0.1f;
-        int basketAccel, speed = 1;
-        Accelerometer accelSensor;
-        Vector3 accelReading = new Vector3();
-        List<Texture2D> newTextures;
-        List<Rectangle> newRectangles;
+       GameData gameStorage;
+        //SpriteBatch spriteBatch;
+        //Texture2D loadScreen;        
+        //Texture2D mannTexture, mannTexture2, mannTexture3, basketLeftTxt, roomTexture, guiBubbleTxt;
+        //Rectangle mannRect, mannRect2, mannRect3,  basketLeftRect, defaultRect, roomRect, guiBubbleRct;
+        //List<BasicComponent> floorToysB, floorToysI, floorToys;
+        //GameGUI talkingBubble;
+        //List<Color> colorList = new List<Color>();
+        //List<Texture2D> textures = new List<Texture2D>();
+        //Color rightBsktColor = Color.Red, leftBsktColor = Color.White, itemColor = Color.Wheat;
+        //Random rnd;
+        //bool itemPlaced = false, firstRun = true, sceneCompleted=false;
+        //int trigger = 90, timer = 0, toysCased=0, numberOfTurns,  nextTexture, newRand, rollDirection;
+        //MoveAbleComponent toy;
+        //SpriteFont spriteFont;
+        //BasicComponent boy, basketLeft,  roomBackground;
+           ContentManager Content;
+       GameComponentCollection Components;
+        //List<Rectangle> rectangles = new List<Rectangle>();
+        //List<int> toyTidiedUp;
+        //SoundEffect backgroundMusic;
+        //float basketSpeed = 0.1f;
+        //int basketAccel, speed = 1;
+        //Accelerometer accelSensor;
+        //Vector3 accelReading = new Vector3();
+        //List<Texture2D> newTextures;
+        //List<Rectangle> newRectangles;
 
 
 
@@ -71,7 +71,7 @@ namespace WindowsPhoneGame1.Scenes
 
 
         public Scene4(Game game, ContentManager content, GameComponentCollection components)
-            : base(game)
+            : base(game, content, components)
         {
             Components = components;
             Content = content;
@@ -79,7 +79,7 @@ namespace WindowsPhoneGame1.Scenes
             gameStorage = new GameData("scene4");
             if(gameStorage.fileExists(gameStorage.FileName)==false)
                  gameStorage.saveScore(0, 0);
-            toyTidiedUp = new List<int>();
+          //  toyTidiedUp = new List<int>();
             // TODO: Construct any child components here
         }
 
@@ -131,9 +131,6 @@ namespace WindowsPhoneGame1.Scenes
             rectangles.Add(new Rectangle(310, 150, 120, 120)); //horse
             rectangles.Add(new Rectangle(310, 200, 120, 90)); //racecar
 
-            newRectangles = new List<Rectangle>();
-            newRectangles.AddRange(rectangles);
-            newTextures = new List<Texture2D>();
            
             rnd = new Random();
 
@@ -141,12 +138,7 @@ namespace WindowsPhoneGame1.Scenes
             base.Initialize();
         }
 
-        void accelSensor_ReadingChanged(object sender, AccelerometerReadingEventArgs e)
-        {
-            accelReading.X = (float)e.X;
-            accelReading.Y = (float)e.Y;
-            accelReading.Z = (float)e.Z;
-        }
+      
         private BasicComponent addFloorToy(Rectangle rect, Texture2D text, int toyNumber)
         {
             int x = rnd.Next(150, 750);
@@ -179,19 +171,7 @@ namespace WindowsPhoneGame1.Scenes
 
         protected override void LoadContent()
         {
-            //spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            //loadScreen = Content.Load<Texture2D>("Images\\loadscreen");
-
-            //spriteBatch.Begin();
-
-            //spriteBatch.Draw(loadScreen, new Vector2(0, 0), Color.White);
-
-            //spriteBatch.End();
-
-            //GraphicsDevice.Present();
-
-         //   SpriteTexture = Content.Load("mySprite");
 
             backgroundMusic = Content.Load<SoundEffect>("ToyRoom");
 
@@ -216,9 +196,9 @@ namespace WindowsPhoneGame1.Scenes
             textures.Add(Content.Load<Texture2D>("Images\\colored\\pad"));
             textures.Add(Content.Load<Texture2D>("Images\\colored\\horse"));
             textures.Add(Content.Load<Texture2D>("Images\\colored\\racecar"));
-            newTextures.AddRange(textures);
-          
-            basketLeftTxt = Content.Load<Texture2D>("Images\\wheelBasket");
+        
+            basketLeftTxt = Content.Load<Texture2D>("Images\\wheelBasket1");
+            basketOpeningTxt = Content.Load<Texture2D>("Images\\wheelBasket2");
       
             spriteFont = Content.Load<SpriteFont>("sf20");
             spriteFont.LineSpacing = 25;
@@ -226,7 +206,7 @@ namespace WindowsPhoneGame1.Scenes
 
             boy = new BasicComponent(this.Game, mannTexture, mannRect, 0f);
             basketLeft = new BasicComponent(this.Game, basketLeftTxt, basketLeftRect, Color.DarkOrange, 0.0f);
-
+            basketOpening = new BasicComponent(this.Game, basketOpeningTxt, basketOpeningRct, Color.LightBlue, 0.0f);
             roomBackground = new BasicComponent(this.Game, roomTexture, roomRect, Color.White, 0.0f);
             toy = new MoveAbleComponent(this.Game, textures[0], defaultRect, Color.White, 0.0f);
             talkingBubble = new GameGUI(this.Game, spriteFont, new Vector2(220, 120), "Hello friend \n will you help  me \n clean my room?", Color.Black, 0f, new Vector2(0, 0), 1f, 0f);
@@ -305,7 +285,7 @@ namespace WindowsPhoneGame1.Scenes
         public override void Update(GameTime gameTime)
         {
 
-            numberOfTurns = textures.Count;
+           
             basketRoll();
             if (floorToys.Count==0)
             {
@@ -318,8 +298,8 @@ namespace WindowsPhoneGame1.Scenes
             timer++;
             if (firstRun == false && timer%200==0)
             {
-                newRand = rnd.Next(0, newTextures.Count - 1);
-                Components.Add(addFloorToy(newRectangles[newRand], newTextures[newRand], floorToys.Count));
+                newRand = rnd.Next(0, textures.Count - 1);
+                Components.Add(addFloorToy(newRand,  floorToys.Count));
                
             }
 

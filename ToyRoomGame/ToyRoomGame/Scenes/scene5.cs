@@ -349,7 +349,7 @@ namespace WindowsPhoneGame1.Scenes
                         firstRun = false;
                         toy.ItemDraw = true;
 
-                        int nextTexture = rnd.Next(0, floorToys.Count);
+                        int nextTexture = rnd.Next(0, floorToys.Count-1);
 
 
                         int nextColor = rnd.Next(0, 8);
