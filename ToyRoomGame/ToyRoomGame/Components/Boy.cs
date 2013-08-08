@@ -31,8 +31,7 @@ namespace WindowsPhoneGame1.Components
         /// </summary>
         public override void Initialize()
         {
-            // TODO: Add your initialization code here
-            spriteBatch = new SpriteBatch(Game.GraphicsDevice);
+         
             
             
         }

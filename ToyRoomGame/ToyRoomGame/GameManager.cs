@@ -63,9 +63,9 @@ namespace WindowsPhoneGame1
             graphics.SupportedOrientations = DisplayOrientation.LandscapeRight |
 
                               DisplayOrientation.LandscapeLeft;
-                                 
 
-
+            graphics.IsFullScreen = true;
+           
             base.Initialize();
         }
 
@@ -102,9 +102,17 @@ namespace WindowsPhoneGame1
         {
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
-                this.Exit();
+            {
+                //sjekk om spillet er i gang gå så tilbake til meny
+                //hvis man er i meny exit gamet totalt
+                if (activeScene == 0)
+                {
+                    this.Exit();
+                }
+            }
+               
            
-            
+          
            
             switch (activeScene)
             {

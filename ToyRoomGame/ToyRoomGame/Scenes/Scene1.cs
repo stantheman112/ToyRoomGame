@@ -14,6 +14,8 @@ using WindowsPhoneGame1.Components;
 using WindowsPhoneGame1.GameStorage;
 using System.Diagnostics;
 using Microsoft.Devices.Sensors;
+using Microsoft.Phone.Shell;
+using Microsoft.Phone;
 
 
 namespace WindowsPhoneGame1.Scenes
@@ -26,30 +28,6 @@ namespace WindowsPhoneGame1.Scenes
     public class Scene1 : MasterScene
     {
         #region private variables
-        GameData gameStorage;
-        SpriteBatch spriteBatch;
-      //  Texture2D loadScreen, basketOpeningTxt, baskethitvisualTxt;        
-     //   Texture2D mannTexture, mannTexture2, mannTexture3, basketLeftTxt, roomTexture, guiBubbleTxt;
-      //  Rectangle mannRect, mannRect2, mannRect3, basketLeftRect, defaultRect, roomRect, guiBubbleRct, bskHit, basketOpeningRct;
-     //   List<BasicComponent> floorToysB, floorToysI, floorToys;
-        GameGUI talkingBubble;
-        List<Color> colorList = new List<Color>();
-     //   List<Texture2D> textures = new List<Texture2D>();
-        Color rightBsktColor = Color.Red, leftBsktColor = Color.White, itemColor = Color.Wheat;
-        Random rnd;
-        bool itemPlaced = false, firstRun = true, sceneCompleted=false;
-     //   int trigger = 90, timer = 0, toysCased = 0, numberOfTurns, nextTexture, rollDirection;
-   //     MoveAbleComponent toy;
-        SpriteFont spriteFont;
-    //    BasicComponent boy, basketLeft,  roomBackground, basketOpening, baskethitvisual;
-        ContentManager Content;
-        GameComponentCollection Components;
-        List<Rectangle> rectangles = new List<Rectangle>();
-        List<int> toyTidiedUp;
-      //  SoundEffect backgroundMusic;
-      
-        GraphicsDeviceManager graphics;
-        bool onTopOfBasket = false, leftOfBasket = false, rightOfBasket = false;
 
         #endregion 
         #region public properties
@@ -74,7 +52,7 @@ namespace WindowsPhoneGame1.Scenes
             gameStorage = new GameData("scene1");
             if(gameStorage.fileExists(gameStorage.FileName)==false)
                  gameStorage.saveScore(0, 0);
-            toyTidiedUp = new List<int>();
+         
             // TODO: Construct any child components here
         }
 
@@ -85,21 +63,23 @@ namespace WindowsPhoneGame1.Scenes
         /// </summary>
         public override void Initialize()
         {
-            //default toy pos and size settings
 
+            PhoneApplicationService.Current.Deactivated += GameDeactivated; 
+            //default toy pos and size settings
+            initPauseScreen();
             accelSensor = new Accelerometer();
             accelSensor.Start();
             accelSensor.ReadingChanged += accelSensor_ReadingChanged;
-
+          
             // TODO: Add your initialization code here
             floorToysB = new List<BasicComponent>();
             floorToysI = new List<BasicComponent>();
             floorToys = new List<BasicComponent>();
             spriteBatch = new SpriteBatch(Game.GraphicsDevice);
-            mannRect = new Rectangle(545, 80, 185, 370);
-            mannRect2 = new Rectangle(550, 80, 180, 370);
-            mannRect3 = new Rectangle(515, 80, 215, 370);
-            guiBubbleRct = new Rectangle(210,-1, 400, 300);
+            mannRect = new Rectangle(555, 80, 185, 320);
+            mannRect2 = new Rectangle(560, 80, 180, 320);
+            mannRect3 = new Rectangle(525, 80, 215, 320);
+            guiBubbleRct = new Rectangle(210,-1, 400, 250);
            
             basketLeftRect = new Rectangle(0, 320, 250, 150);
             basketOpeningRct = new Rectangle(25, 305, 250, 150);
@@ -111,26 +91,26 @@ namespace WindowsPhoneGame1.Scenes
             //default toy størrelse
             defaultRect = new Rectangle(510, 200, 100, 90);
 
-            rectangles.Add(new Rectangle(510, 230, 120, 90)); //sportscar
-            rectangles.Add(new Rectangle(530, 200, 130, 120)); //plane
-            rectangles.Add(new Rectangle(510, 220, 130, 90));//train
+            rectangles.Add(new Rectangle(510, 190, 120, 90)); //sportscar
+            rectangles.Add(new Rectangle(530, 205, 130, 120)); //plane
+            rectangles.Add(new Rectangle(510, 210, 130, 90));//train
 
-            rectangles.Add(new Rectangle(510, 240, 120, 90)); //tractor
-            rectangles.Add(new Rectangle(510, 220, 120, 120)); //digger
-            rectangles.Add(new Rectangle(510, 200, 130, 130)); //dino
+            rectangles.Add(new Rectangle(510, 210, 120, 90)); //tractor
+            rectangles.Add(new Rectangle(515, 180, 120, 120)); //digger
+            rectangles.Add(new Rectangle(510, 190, 130, 130)); //dino
 
-            rectangles.Add(new Rectangle(505, 210, 120, 120)); //baby
-            rectangles.Add(new Rectangle(505, 180, 120, 120)); //soldier
-            rectangles.Add(new Rectangle(505, 230, 100, 90));//actionfigure
+            rectangles.Add(new Rectangle(505, 180, 120, 120)); //baby
+            rectangles.Add(new Rectangle(505, 160, 120, 120)); //soldier
+            rectangles.Add(new Rectangle(505, 180, 100, 90));//actionfigure
 
-            rectangles.Add(new Rectangle(505, 230, 120, 120));//teddy
-            rectangles.Add(new Rectangle(515, 245, 70, 70)); //block
-            rectangles.Add(new Rectangle(510, 220, 75, 75));//ball
+            rectangles.Add(new Rectangle(505, 195, 120, 120));//teddy
+            rectangles.Add(new Rectangle(520, 230, 60, 60)); //block
+            rectangles.Add(new Rectangle(515, 210, 80, 80));//ball
 
-            rectangles.Add(new Rectangle(520, 180, 100, 150)); //balloon
+            rectangles.Add(new Rectangle(520, 155, 105, 150)); //balloon
             rectangles.Add(new Rectangle(510, 200, 130, 130));//horse
-            rectangles.Add(new Rectangle(510, 200, 130, 130));//pad
-            rectangles.Add(new Rectangle(510, 220, 130, 100));//racecar
+            rectangles.Add(new Rectangle(510, 195, 130, 130));//pad
+            rectangles.Add(new Rectangle(510, 190, 130, 100));//racecar
 
 
            
@@ -144,20 +124,8 @@ namespace WindowsPhoneGame1.Scenes
 
         protected override void LoadContent()
         {
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-
             loadScreen = Content.Load<Texture2D>("Images\\gui\\loadscreen");
-            spriteBatch.Begin();
-
-            spriteBatch.Draw(loadScreen, new Vector2(-90, -70), Color.White);
-
-            spriteBatch.End();
-
-         
-
-            GraphicsDevice.Present();
-
-         //   SpriteTexture = Content.Load("mySprite");
+            loadScreenDraw(loadScreen, new Vector2(-90, -70));
 
             backgroundMusic = Content.Load<SoundEffect>("ToyRoom");
          
@@ -212,24 +180,8 @@ namespace WindowsPhoneGame1.Scenes
            // Components.Add(gameGUI);
             for (int i = 0; i < textures.Count; i++)
             {
-                int x = rnd.Next(150, 750);               
-                int y = rnd.Next(250, 400);
-
-                //string rot = // Convert.ToString(rnd.Next(0, 2)) + "." + Convert.ToString(rnd.Next(0, 9));
-              
-                double rotation = rnd.NextDouble();
-                Rectangle tmpRect = new Rectangle();
-                tmpRect = rectangles[i];
-                tmpRect.X = x; 
-                tmpRect.Y = y;
-
-                BasicComponent tmp = new BasicComponent(this.Game, textures[i], tmpRect,(float)rotation);
-                tmp.ComponentType = "toy" + Convert.ToString(i);
-                floorToys.Add(tmp);
-                if ((y+tmpRect.Height) < (mannRect.Y+mannRect.Height))
-                    floorToysB.Add(tmp);
-                else
-                    floorToysI.Add(tmp);
+                addFloorToy(i, i, Color.White);
+             
 
             }
 
@@ -249,110 +201,58 @@ namespace WindowsPhoneGame1.Scenes
            
             Components.Add(toy);
             Components.Add(basketLeft);
+            loadPauseScreen();     
             Components.Add(talkingBubble);
-          //  Components.Add(baskethitvisual);
+        
             numberOfTurns = textures.Count;
             base.LoadContent();
         }
-        protected override void UnloadContent()
-        {
+      
 
-            Components.Remove(roomBackground);
-           // Components.Remove(gameGUI);
-         
-            Components.Remove(boy);
-
-            Components.Remove(basketLeft);
-        
-            Components.Remove(toy);
-          
-            base.UnloadContent();
-        }
-
-        //private void basketRoll()
-        //{
-        //    if (basketLeft.CompRectX < -50)
-        //        basketLeft.CompRectX = 50;
-        //    if (basketLeft.CompRectX > 590)
-        //        basketLeft.CompRectX = 590;
-
-        //    if (this.Game.Window.CurrentOrientation.ToString() == "LandscapeLeft")
-        //    {
-        //        rollDirection = -20;
-        //        if (basketLeft.CompRectX >= -50 && accelReading.Y > 0.0f)
-        //            basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
-        //        if (basketLeft.CompRectX <= 590 && accelReading.Y < 0.0f)
-        //            basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
-        //    }
-        //    else
-        //    {
-        //        rollDirection = 20;
-        //        if (basketLeft.CompRectX <= 590 && accelReading.Y > 0.0f)
-        //            basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
-        //        if (basketLeft.CompRectX >= -50 && accelReading.Y < 0.0f)
-        //            basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
-        //        if (basketLeft.CompRectX < -50)
-        //            basketLeft.CompRectX = 50;
-
-        //    }
-
-        //    basketOpening.CompRectX = basketLeft.CompRectX + 15;
-        //    bskHit.X = basketLeft.CompRectX+35;
-        //    baskethitvisual.ComponentRectangle = bskHit;
-          
-
-        //}
 
     
         public override void Update(GameTime gameTime)
         {
-
-
-            
-
-            basketRoll();
-            basketCollisionHandling(basketLeft);
-           
-            if (toysCased < numberOfTurns)
+            if (pauseGame() == false)
             {
-            }
-            else {
-              //  gameStorage.saveScore(gameGUI.CurrentScore, gameGUI.MaxScore);
-                if(gameStorage.getProgression("lobby")<1)
-                   gameStorage.saveProgression(1);
-                this.UnloadContent();
-                sceneCompleted = true; 
-            }
-            timer++;         
 
-            if (timer == trigger)
-            {
-                if (talkingBubble.GuiVisible == true)
-                    backgroundMusic.Play();
-                talkingBubble.GuiVisible = false;
-                Components.Remove(talkingBubble);
-                if (itemPlaced == true || firstRun == true)
+                if (toysCased < numberOfTurns && GamePad.GetState(PlayerIndex.One).Buttons.Back != ButtonState.Pressed && backButtonPushed == false)
                 {
-                    toy.ItemTouched = false;
-                    toy.CompRectX = defaultRect.X;
-                    toy.CompRectY = defaultRect.Y;
-                    firstRun = false;
-                    toy.ItemDraw = true;
-                    
 
-                     nextTexture = rnd.Next(0, textures.Count-1);
-                    
-                    
-                }
-                    
+                    basketRoll();
+                    basketCollisionHandling(basketLeft);
 
-                    toy.ComponentTexture = textures[nextTexture];
-                    toy.ComponentRectangle = rectangles[nextTexture];
 
-                    try
+
+                    timer++;
+
+                    if (timer == trigger)
                     {
-                        bool removed = false;
-                       
+                        if (talkingBubble.GuiVisible == true)
+                            backgroundMusic.Play();
+                        talkingBubble.GuiVisible = false;
+                        Components.Remove(talkingBubble);
+                        if (itemPlaced == true || firstRun == true)
+                        {
+                            toy.ItemTouched = false;
+                            toy.CompRectX = defaultRect.X;
+                            toy.CompRectY = defaultRect.Y;
+                            firstRun = false;
+                            toy.ItemDraw = true;
+
+
+                            nextTexture = rnd.Next(0, floorToys.Count - 1);
+
+
+                        }
+
+                        toy.ComponentTexture = floorToys[nextTexture].ComponentTexture;
+                        toy.ComponentRectangle = rectangles[floorToys[nextTexture].ComponentNumber];
+
+                        try
+                        {
+                            bool removed = false;
+
                             for (int p = 0; p < floorToysI.Count; p++)
                             {
                                 if (floorToysI[p].ComponentType == floorToys[nextTexture].ComponentType)
@@ -361,10 +261,10 @@ namespace WindowsPhoneGame1.Scenes
                                     floorToysI.Remove(floorToysI[p]);
                                     floorToys.Remove(floorToys[nextTexture]);
 
-                                    textures.Remove(textures[nextTexture]);
-                                    rectangles.Remove(rectangles[nextTexture]);
+                                    //    textures.Remove(textures[nextTexture]);
+                                    //     rectangles.Remove(rectangles[nextTexture]);
                                     removed = true;
-                                    
+
                                 }
                             }
                             if (removed == false)
@@ -378,61 +278,73 @@ namespace WindowsPhoneGame1.Scenes
                                         floorToysB.Remove(floorToysB[n]);
                                         floorToys.Remove(floorToys[nextTexture]);
 
-                                        textures.Remove(textures[nextTexture]);
-                                        rectangles.Remove(rectangles[nextTexture]);
-                                       
+                                        //   textures.Remove(textures[nextTexture]);
+                                        //   rectangles.Remove(rectangles[nextTexture]);
+
 
                                     }
 
                                 }
                             }
+                        }
+
+
+                        catch (Exception ex)
+                        {
+
+
+                        }
+
+
+                        boy.ComponentTexture = mannTexture2;
+                        boy.ComponentRectangle = mannRect2;
+
+
+
+
                     }
-
-
-                    catch (Exception ex)
+                    if (toy.ItemTaken == true && boy.ComponentTexture != mannTexture3)
                     {
-                        
+                        boy.ComponentTexture = mannTexture;
+                        boy.ComponentRectangle = mannRect;
 
                     }
-            
+                    if (toy.ComponentRectangle.Intersects(bskHit))
+                    {
+                        toysCased++;
+                        boy.ComponentTexture = mannTexture3;
+                        boy.ComponentRectangle = mannRect3;
+                        if (nextTexture < 6)
+                        {
+                            // gameGUI.CurrentScore = gameGUI.CurrentScore+1;
+                            //   gameGUI.InfoText = gameGUI.CurrentScore.ToString() + "/" + maxScore.ToString();
+                        }
+                        else
+                        {
+                            //spill av animasjon på at gutten blir oppgitt? 
+                        }
 
-                    boy.ComponentTexture = mannTexture2;
-                    boy.ComponentRectangle = mannRect2;
+                        itemPlaced = true;
+                        timer = 0;
+                        toy.ItemDraw = false;
+                        toy.CompRectX = -10000;
 
-
-                
-
-            }
-            if (toy.ItemTaken == true && boy.ComponentTexture != mannTexture3)
-            {
-                boy.ComponentTexture = mannTexture;
-                boy.ComponentRectangle = mannRect;
-                
-            }
-            if (toy.ComponentRectangle.Intersects(bskHit))
-            {
-                toysCased++;
-                boy.ComponentTexture = mannTexture3;
-                boy.ComponentRectangle = mannRect3;
-                if (nextTexture<6)
-                {
-                   // gameGUI.CurrentScore = gameGUI.CurrentScore+1;
-                 //   gameGUI.InfoText = gameGUI.CurrentScore.ToString() + "/" + maxScore.ToString();
+                    }
                 }
                 else
                 {
-                    //spill av animasjon på at gutten blir oppgitt? 
+                    if (toysCased == numberOfTurns)
+                    {
+                        if (gameStorage.getProgression("lobby") < 1)
+                            gameStorage.saveProgression(1);
+                    }
+                    this.UnloadContent();
+                    sceneCompleted = true;
                 }
-                 
-                itemPlaced = true;
-                timer = 0;
-                toy.ItemDraw = false;
-                toy.CompRectX = -10000;
-             
-            }
-          
 
-            base.Update(gameTime);
+
+                base.Update(gameTime);
+            }
         }
 
       

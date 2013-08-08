@@ -299,18 +299,7 @@ namespace WindowsPhoneGame1.Scenes
             Components.Add(talkingBubble);
             base.LoadContent();
         }
-        protected override void UnloadContent()
-        {
-
-            Components.Remove(roomBackground);
-            Components.Remove(gameGUI);
-            Components.Remove(boy);
-            Components.Remove(basketLeft);
-            Components.Remove(basketRight);
-            Components.Remove(toy);
-          
-            base.UnloadContent();
-        }
+      
 
         public override void Update(GameTime gameTime)
         {

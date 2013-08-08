@@ -26,6 +26,7 @@ namespace WindowsPhoneGame1.Components
         private bool movingAllowed = true;
 
         #region Public properties
+       
         public bool MovingAllowed
         {
             set
@@ -77,25 +78,29 @@ namespace WindowsPhoneGame1.Components
            startY = rectangle.Y;         
            
         }
+        //public MoveAbleComponent(Game game, Texture2D texture, Rectangle rectangle, Color color, int moveX, float rot)
+        //    : base(game, texture, rectangle, color, rot)
+        //{
+        //    ComponentColor = color;
+        //    startX = rectangle.X;
+        //    startY = rectangle.Y;
+        //    moveAllowedX = moveX; //moveable component must be higher than this to be allowed in x dir
+
+        //}
 
         /// <summary>
         /// Allows the game component to perform any initialization it needs to before starting
         /// to run.  This is where it can query for any required services and load content.
         /// </summary>
-        public override void Initialize()
-        {
-            // TODO: Add your initialization code here
-            spriteBatch = new SpriteBatch(Game.GraphicsDevice);
-            touchCollection = TouchPanel.GetState();
+        //public override void Initialize()
+        //{
+
+
+        //    touchCollection = TouchPanel.GetState();
             
             
-        }
+        //}
 
-        protected override void LoadContent()
-        {
-
-          
-        }
 
         /// <summary>
         /// Allows the game component to update itself.
@@ -125,23 +130,38 @@ namespace WindowsPhoneGame1.Components
                         if (componentRectangle.Intersects(new Rectangle((int)tl.Position.X, (int)tl.Position.Y, componentRectangle.Width, componentRectangle.Height)))
                         {
                             itemTouched = true;
-                            ItemMoving = true;
+                            itemMoving = true;
                         }
 
 
-                        if (itemTouched == true)
+                        if (itemTouched == true) //&& ((int)tl.Position.X >= componentRectangle.X - 100 &&(int)tl.Position.X <= componentRectangle.X + 100))
                         {
                             componentRectangle.Y = (int)tl.Position.Y - 150;
                             // boy.ComponentTexture = mannTexture;
-                            if ((int)tl.Position.X < componentRectangle.X)
-                                componentRectangle.X -= mvSpeed;
-                            if ((int)tl.Position.X > componentRectangle.X)
-                                componentRectangle.X += mvSpeed;
-                            if ((int)tl.Position.Y < componentRectangle.Y)
-                                componentRectangle.Y -= mvSpeed;
-                            if ((int)tl.Position.Y > componentRectangle.Y)
-                                componentRectangle.Y += mvSpeed;
 
+
+                            if ((int)tl.Position.X < componentRectangle.X)
+                            {
+                                itemMoving = true;
+                                componentRectangle.X -= mvSpeed;
+                            }
+                            if ((int)tl.Position.X > componentRectangle.X)
+                            {
+                                itemMoving = true;
+                                componentRectangle.X += mvSpeed;
+                            }
+
+                            if ((int)tl.Position.Y < componentRectangle.Y)
+                            {
+                                itemMoving = true;
+                                componentRectangle.Y -= mvSpeed;
+                            }
+                            if ((int)tl.Position.Y > componentRectangle.Y)
+                            {
+                                itemMoving = true;
+                                componentRectangle.Y += mvSpeed;
+                            }
+                            
 
                             return true;
 

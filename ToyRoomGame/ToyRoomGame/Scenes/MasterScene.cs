@@ -14,6 +14,9 @@ using WindowsPhoneGame1.Components;
 using WindowsPhoneGame1.GameStorage;
 using System.Diagnostics;
 using Microsoft.Devices.Sensors;
+using Microsoft.Phone;
+using Microsoft.Phone.Shell;
+
 
 
 namespace WindowsPhoneGame1.Scenes
@@ -26,40 +29,41 @@ namespace WindowsPhoneGame1.Scenes
     public class MasterScene : Microsoft.Xna.Framework.DrawableGameComponent
     {
         #region private variables
-        GameData gameStorage;
-    protected    SpriteBatch spriteBatch;
-      protected  Texture2D mannTexture, mannTexture2, mannTexture3, basketTxt, boyDissapointedTxt, roomTexture, crayonTxt, guiBubbleTxt, basketLeftTxt, basketOpeningTxt, loadScreen;
-        protected Rectangle mannRect, bskHit, basketLeftRect, mannRect2, mannRect3, defaultRect, roomRect, crayonRect, guiBubbleRct, basketOpeningRct, basketRightRect, basketOpeningLRct, basketOpeningRRct, bskHitL, bskHitR ;
-
-
-          
-        GameGUI gameGUI;
-     protected   List<Color> colorList = new List<Color>();
-      protected  List<Texture2D> textures = new List<Texture2D>();
-      protected  Color rightBsktColor = Color.Red, leftBsktColor = Color.White, itemColor = Color.Wheat, rightColor, wrongColor, tmpColor, floorToyColor;
-      protected  Random rnd;
-      protected  bool itemPlaced = false, firstRun = true, sceneCompleted=false;
-       protected int trigger = 90, timer = 0, toysCased=0, numberOfTurns,  maxScore=20, rollDirection, newRand, nextTexture;
+      protected GameData gameStorage;
+      protected SpriteBatch spriteBatch;
+      protected Texture2D mannTexture, mannTexture2, mannTexture3, basketTxt, boyDissapointedTxt, roomTexture, crayonTxt, guiBubbleTxt, basketLeftTxt, basketOpeningTxt, loadScreen, pauseScreenTxt,
+                          resumeTxt, backTxt, pauseButtonTxt;
+      protected Rectangle mannRect, bskHit, basketLeftRect, mannRect2, mannRect3, defaultRect, roomRect,
+                          crayonRect, guiBubbleRct, basketOpeningRct, basketRightRect, basketOpeningLRct,
+                          basketOpeningRRct, bskHitL, bskHitR, pauseScreenRect, backRect, resumeRect, pauseButtonRect;
+      protected GameGUI gameGUI;
+      protected List<Color> colorList = new List<Color>();
+      protected List<Texture2D> textures = new List<Texture2D>();
+      protected Color rightBsktColor = Color.Red, leftBsktColor = Color.White, itemColor = Color.Wheat, rightColor, wrongColor, tmpColor, floorToyColor;
+      protected Random rnd;
+      protected bool itemPlaced = false, firstRun = true, sceneCompleted=false, gamePaused = false, backButtonPushed = false;
+      protected int trigger = 90, timer = 0, toysCased=0, casedRight = 0, numberOfTurns,  maxScore=20, rollDirection, newRand, nextTexture;
       protected MoveAbleComponent toy;
-      protected  SpriteFont spriteFont;
-       protected BasicComponent boy, basketLeft, roomBackground, basketOpening, basketOpeningLeft, basketOpeningRight,basketRight ;
-        ContentManager Content;
-        GameComponentCollection Components;
-     protected   List<Rectangle> rectangles = new List<Rectangle>();
-       protected List<BasicComponent> crayons = new List<BasicComponent>();
-        protected List<BasicComponent> floorToysB, floorToysI, floorToys;
-        private bool somethingMoving = false;
-    protected    GameGUI talkingBubble;
-    protected    float basketSpeed = 0.1f;
-      protected  int basketAccel, speed = 1;
-        protected Accelerometer accelSensor;
-        protected Vector3 accelReading = new Vector3();
-        protected SoundEffect backgroundMusic;
+      protected SpriteFont spriteFont;
+      protected BasicComponent boy, basketLeft, roomBackground, basketOpening, basketOpeningLeft, basketOpeningRight,basketRight, pauseScreen, resumeButton, backButton, pauseButton;
+      protected ContentManager Content;
+      protected GameComponentCollection Components;
+      protected List<Rectangle> rectangles = new List<Rectangle>();
+      protected List<BasicComponent> crayons = new List<BasicComponent>();
+      protected List<BasicComponent> floorToysB, floorToysI, floorToys;     
+      protected GameGUI talkingBubble;
+      protected float basketSpeed = 0.1f;
+      protected int basketAccel, speed = 1;
+      protected Accelerometer accelSensor;
+      protected Vector3 accelReading = new Vector3();
+      protected SoundEffect backgroundMusic, yeah, ohno;
 
-        GraphicsDeviceManager graphics;
-     protected   float rotationDirection;
+      protected SoundEffectInstance yeahinst, ohnoinst;
+      protected GraphicsDeviceManager graphics;    
+      protected bool onTopOfBasket = false, leftOfBasket = false, rightOfBasket = false;
+      protected TouchCollection touchCollection;
 
-       protected bool onTopOfBasket = false, leftOfBasket = false, rightOfBasket = false;
+      protected float rotationDirection = -1f;
 
         #endregion 
         #region public properties
@@ -81,9 +85,6 @@ namespace WindowsPhoneGame1.Scenes
             Components = components;
             Content = content;
             colorList = GameTools.elementColors();
-            gameStorage = new GameData("scene3");
-            if(gameStorage.fileExists(gameStorage.FileName)==false)
-                 gameStorage.saveScore(0, 0);
            
             // TODO: Construct any child components here
         }
@@ -128,16 +129,12 @@ namespace WindowsPhoneGame1.Scenes
      
         protected override void UnloadContent()
         {
+            Components.Clear();
+            this.rectangles = null;
+            this.textures = null;
 
-            Components.Remove(roomBackground);
-            Components.Remove(gameGUI);
-            Components.Remove(boy);
-       
-            Components.Add(basketOpening);
-            Components.Remove(toy);
-            Components.Remove(basketLeft);
-            foreach(BasicComponent mc in crayons)
-                Components.Remove(mc);
+
+           
             base.UnloadContent();
         }
 
@@ -154,7 +151,7 @@ namespace WindowsPhoneGame1.Scenes
             //    {
             //        toy.ItemTouched = false;
             //    }
-                if (mc.ComponentRectangle.Intersects(basketLeft.ComponentRectangle))
+                if (mc.ComponentRectangle.Intersects(bskHit))
                 {
                     basketLeft.ComponentColor = mc.ComponentColor;
                     basketOpening.ComponentColor = mc.ComponentColor;
@@ -194,6 +191,39 @@ namespace WindowsPhoneGame1.Scenes
             tmp.ComponentNumber = compNumber;
             floorToys.Add(tmp);
             if ((y + tmpRect.Height) < (mannRect.Y + mannRect.Height))
+            {
+                floorToysB.Add(tmp);
+                return tmp;
+            }
+            else
+            {
+
+                floorToysI.Add(tmp);
+                return tmp;
+            }
+        }
+
+        protected BasicComponent addFloorToy(int compNumber, int toyNumber, Color originalColor)
+        {
+            int x = rnd.Next(0, 650);
+            int y = rnd.Next(290, 400);
+
+            //string rot = // Convert.ToString(rnd.Next(0, 2)) + "." + Convert.ToString(rnd.Next(0, 9));
+
+            double rotation = rnd.NextDouble();
+            int nextFloorToy = rnd.Next(0, textures.Count - 1);
+
+
+            rotationDirection = rotationDirection * -1f;
+            rotation = rotation * rotationDirection;
+            Rectangle tmpRect = new Rectangle(x, y, rectangles[compNumber].Width, rectangles[compNumber].Height);
+
+      
+            BasicComponent tmp = new BasicComponent(this.Game, textures[compNumber], tmpRect, originalColor, (float)rotation);
+            tmp.ComponentType = "toy" + Convert.ToString(toyNumber);
+            tmp.ComponentNumber = compNumber;
+            floorToys.Add(tmp);
+            if ((y + tmpRect.Height-50) < (mannRect.Y + mannRect.Height))
             {
                 floorToysB.Add(tmp);
                 return tmp;
@@ -326,6 +356,7 @@ namespace WindowsPhoneGame1.Scenes
             }
             else
             {
+               
                 if (toy.ItemMoving == false)
                     rightOfBasket = false;
             }
@@ -384,7 +415,95 @@ namespace WindowsPhoneGame1.Scenes
 
 
         }
+        protected void initPauseScreen()
+        {
+            pauseScreenRect = new Rectangle(0,0, 800, 500);
+            backRect = new Rectangle(50, 400, 130, 130);
+            resumeRect = new Rectangle(50, 100, 130, 130);
+            pauseButtonRect = new Rectangle(10, 10, 50, 50);
 
+        }
+        protected void loadPauseScreen()
+        {
+             pauseScreenTxt = Content.Load<Texture2D>("Images\\gui\\pausescreen");
+             resumeTxt = Content.Load<Texture2D>("Images\\playButton");
+             backTxt = Content.Load<Texture2D>("Images\\gui\\backButton");
+             pauseButtonTxt = Content.Load<Texture2D>("Images\\gui\\pauseButton");
+             backButton = new BasicComponent(this.Game, backTxt, backRect, Color.White, 0.0f);
+             resumeButton = new BasicComponent(this.Game, resumeTxt, resumeRect, Color.White, 0.0f);
+             pauseScreen = new BasicComponent(this.Game, pauseScreenTxt, pauseScreenRect, Color.White, 0.0f);
+             pauseButton = new BasicComponent(this.Game, pauseButtonTxt, pauseButtonRect, Color.White, 0.0f);
+
+             backButton.ItemDraw = false;
+             pauseScreen.ItemDraw = false;
+             resumeButton.ItemDraw = false;
+
+             Components.Add(pauseButton);
+            
+             Components.Add(pauseScreen);
+             Components.Add(backButton);
+             Components.Add(resumeButton);             
+             
+        
+
+        }
+        protected void GameDeactivated(object sender, EventArgs a)
+        {
+            gamePaused = true;
+
+        }
+        protected bool pauseGame()
+        {
+             
+            
+              touchCollection = TouchPanel.GetState();
+
+              if (gamePaused == true)
+              {
+                  if (backButton.compPushed(touchCollection))
+                  {
+                      backButtonPushed = true;
+                      return false;
+                  }
+                  if (resumeButton.compPushed(touchCollection))
+                  {
+                      gamePaused = false;
+                      backButton.ItemDraw = false;
+                      pauseScreen.ItemDraw = false;
+                      resumeButton.ItemDraw = false;
+                      backButtonPushed = false;
+                      return gamePaused;
+                  }
+              }
+              if (pauseButton.compPushed(touchCollection) || GamePad.GetState(PlayerIndex.One).Buttons.BigButton == ButtonState.Pressed || gamePaused == true)
+              {
+                 
+                  backButton.ItemDraw = true;
+                  pauseScreen.ItemDraw = true;
+                  resumeButton.ItemDraw = true;
+                  gamePaused = true;
+                  return true;
+
+              }
+           
+              if (gamePaused == false)
+              {
+
+                  return false;
+              }
+              else
+              {
+                  return true;
+              }
+            
+        }
+        protected void endGame()
+        {
+            // vis ikoner for å starte på nytt eller gå til meny
+            // vis gutt som er skuffet eller glad
+            //tilbakeknapp skal gå tilbake til meny
+            // må ha en knapp for å spille neste level også
+        }
 
 
 

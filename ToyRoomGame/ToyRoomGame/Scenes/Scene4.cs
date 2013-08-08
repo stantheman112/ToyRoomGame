@@ -172,7 +172,8 @@ namespace WindowsPhoneGame1.Scenes
         protected override void LoadContent()
         {
 
-
+            loadScreen = Content.Load<Texture2D>("Images\\gui\\loadscreen");
+            loadScreenDraw(loadScreen, new Vector2(-90, -70));
             backgroundMusic = Content.Load<SoundEffect>("ToyRoom");
 
             mannTexture = Content.Load<Texture2D>("Images\\theBoy");
@@ -243,44 +244,8 @@ namespace WindowsPhoneGame1.Scenes
             numberOfTurns = textures.Count;
             base.LoadContent();
         }
-        protected override void UnloadContent()
-        {
-
-            Components.Remove(roomBackground);
-           // Components.Remove(gameGUI);
-           
-            Components.Remove(boy);
-
-            Components.Remove(basketLeft);
+       
         
-            Components.Remove(toy);
-          
-            base.UnloadContent();
-        }
-
-        private void basketRoll()
-        {
-
-            if (this.Game.Window.CurrentOrientation.ToString() == "LandscapeLeft")
-            {
-                rollDirection = -20;
-                if (basketLeft.CompRectX >= -50 && accelReading.Y > 0.0f)
-                    basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
-                if (basketLeft.CompRectX <= 590 && accelReading.Y < 0.0f)
-                    basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
-            }
-            else
-            {
-                rollDirection = 20;
-                if (basketLeft.CompRectX <= 590 && accelReading.Y > 0.0f)
-                    basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
-                if (basketLeft.CompRectX >= -50 && accelReading.Y < 0.0f)
-                    basketLeft.CompRectX = basketLeft.CompRectX + (int)(accelReading.Y * rollDirection);
-            }
-
-
-
-        }
 
         public override void Update(GameTime gameTime)
         {
@@ -289,7 +254,7 @@ namespace WindowsPhoneGame1.Scenes
             basketRoll();
             if (floorToys.Count==0)
             {
-              //  gameStorage.saveScore(gameGUI.CurrentScore, gameGUI.MaxScore);
+             
                 if(gameStorage.getProgression("lobby")<4)
                    gameStorage.saveProgression(4);
                 this.UnloadContent();

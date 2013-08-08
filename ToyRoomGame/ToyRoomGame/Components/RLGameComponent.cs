@@ -29,7 +29,7 @@ namespace WindowsPhoneGame1.Components
        protected float rotation;
         public int ComponentNumber = 0;
        public string ComponentType { get; set; }
-        protected bool itemDraw = false;
+        protected bool itemDraw = true;
 
        #region public properties
        public Texture2D ComponentTexture
@@ -150,7 +150,7 @@ namespace WindowsPhoneGame1.Components
         {
             // TODO: Add your initialization code here
             spriteBatch = new SpriteBatch(Game.GraphicsDevice);
-            
+            touchCollection = TouchPanel.GetState();
             base.Initialize();
         }
 
@@ -194,13 +194,17 @@ namespace WindowsPhoneGame1.Components
 
         public override void Draw(GameTime gameTime)
         {
-            spriteBatch.Begin();
-            if (rotation == 0)
-                spriteBatch.Draw(componentTexture, componentRectangle, componentColor);
-            else
-                spriteBatch.Draw(componentTexture, componentRectangle, null, componentColor, rotation, new Vector2(0, 0), SpriteEffects.None, 0.0f);
-            spriteBatch.End();
-            base.Draw(gameTime);
+            if (itemDraw == true)
+            {
+                spriteBatch.Begin();
+
+                if (rotation == 0.0f)
+                    spriteBatch.Draw(componentTexture, componentRectangle, componentColor);
+                else
+                    spriteBatch.Draw(componentTexture, componentRectangle, null, componentColor, rotation, new Vector2(0, 0), SpriteEffects.None, 0.0f);
+                spriteBatch.End();
+                base.Draw(gameTime);
+            }
         }
     }
 }
