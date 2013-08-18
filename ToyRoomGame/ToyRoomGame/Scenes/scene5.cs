@@ -10,13 +10,13 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Input.Touch;
 using RLGames;
-using WindowsPhoneGame1.Components;
-using WindowsPhoneGame1.GameStorage;
+using Toyroom.Components;
+using Toyroom.GameStorage;
 using System.Diagnostics;
 using Microsoft.Devices.Sensors;
 
 
-namespace WindowsPhoneGame1.Scenes
+namespace Toyroom.Scenes
 {
 
 
@@ -89,7 +89,7 @@ namespace WindowsPhoneGame1.Scenes
         /// </summary>
         public override void Initialize()
         {
-       
+            initPauseScreen();
             accelSensor = new Accelerometer();
             accelSensor.Start();
             accelSensor.ReadingChanged += accelSensor_ReadingChanged;
@@ -185,6 +185,7 @@ namespace WindowsPhoneGame1.Scenes
         {
             loadScreen = Content.Load<Texture2D>("Images\\gui\\loadscreen");
             loadScreenDraw(loadScreen, new Vector2(-90, -70));
+            loadPauseScreen();
 
 
             mannTexture = Content.Load<Texture2D>("Images\\theBoy");
@@ -238,45 +239,16 @@ namespace WindowsPhoneGame1.Scenes
             gameGUI = new GameGUI(this.Game, spriteFont, new Vector2(10,10), "0/"+textures.Count, Color.Black);
             gameGUI.MaxScore = textures.Count;
            
-            
-            for (int i = 0; i < textures.Count; i++)
-            {
-                int x = rnd.Next(150, 750);
-                int y = rnd.Next(250, 400);
-           
-                double rotation = rnd.NextDouble();
-
-                rotationDirection = rotationDirection * -1f;
-                rotation = rotation * rotationDirection;
-                Rectangle tmpRect = new Rectangle();
-                tmpRect = rectangles[i];
-                tmpRect.X = x;
-                tmpRect.Y = y;
-
-               
-                GameTools.randomColor(ref floorToyColor, 255);
-                tmpColor = floorToyColor;
-             
-               
-                while (floorToyColor == tmpColor)
-                {
-                    GameTools.randomColor(ref floorToyColor, 255);
-                }
-                GameTools.randomColor(ref tmpColor, 255);
-                BasicComponent tmp = new BasicComponent(this.Game, textures[i], tmpRect, floorToyColor, (float)rotation);
-                tmp.ComponentType = "toy" + Convert.ToString(i);
-                tmp.ComponentNumber = i;
-               
-              
-                floorToys.Add(tmp);
-                if ((y + tmpRect.Height) < (mannRect.Y + mannRect.Height))
-                    floorToysB.Add(tmp);
-                else
-                    floorToysI.Add(tmp);
-
-            }
+          
 
             Components.Add(roomBackground);
+
+
+            for (int i = 0; i < textures.Count; i++)
+            {
+                addFloorToy(i, i);
+            }
+
             Components.Add(gameGUI);
 
             for (int o = 0; o < floorToysB.Count; o++)
@@ -299,200 +271,202 @@ namespace WindowsPhoneGame1.Scenes
             Components.Add(talkingBubble);
             base.LoadContent();
         }
-      
+
 
         public override void Update(GameTime gameTime)
         {
-
-            basketOpeningLeft.ComponentColor = basketLeft.ComponentColor;
-            basketOpeningRight.ComponentColor = basketRight.ComponentColor;
-            if (toy.CompRectX < 360)
-                basketCollisionHandling(basketLeft, true);
-            else
-                basketCollisionHandling(basketRight, false);
-
-
-            if (floorToys.Count > 0)
+            if (pauseGame() == false)
             {
 
-                timer++;
-                if (firstRun == false && timer % 200 == 0 && floorToys.Count > 0)
+                if (toysCased < numberOfTurns && GamePad.GetState(PlayerIndex.One).Buttons.Back != ButtonState.Pressed && restartButtonPushed == false && menuButtonPushed == false)
                 {
-                    newRand = rnd.Next(0, textures.Count - 1);
-                    Components.Add(addFloorToy(newRand, floorToys.Count));
 
-                }
+                    basketOpeningLeft.ComponentColor = basketLeft.ComponentColor;
+                    basketOpeningRight.ComponentColor = basketRight.ComponentColor;
+                    if (toy.CompRectX < 360)
+                        basketCollisionHandling(basketLeft, true);
+                    else
+                        basketCollisionHandling(basketRight, false);
 
-                if (timer == trigger)
-                {
-                    if (talkingBubble.GuiVisible == true)
+                    timer++;
+                    if (firstRun == false && timer % 200 == 0 && floorToys.Count > 0)
                     {
-                        talkingBubble.GuiVisible = false;
-                        Components.Remove(talkingBubble);
+                        newRand = rnd.Next(0, textures.Count - 1);
+                        Components.Add(addFloorToy(newRand, floorToys.Count));
+
                     }
-                    if (itemPlaced == true || firstRun == true)
+
+                    if (timer == trigger)
                     {
-                        toy.ItemTouched = false;
-                        toy.CompRectX = defaultRect.X;
-                        toy.CompRectY = defaultRect.Y;
-                        firstRun = false;
-                        toy.ItemDraw = true;
-
-                        int nextTexture = rnd.Next(0, floorToys.Count-1);
-
-
-                        int nextColor = rnd.Next(0, 8);
-                        int nextWrongColor = nextColor;
-                        while (nextWrongColor == nextColor)
-                            nextWrongColor = rnd.Next(0, 8);
-                        int i = rnd.Next(1, 3);
-                        GameTools.randomColor(ref rightColor, 255);
-                        GameTools.randomColor(ref wrongColor, 255);
-                        while (rightColor == wrongColor)
-                            GameTools.randomColor(ref wrongColor, 255);
-
-                        switch (i)
+                        if (talkingBubble.GuiVisible == true)
                         {
-                            case 1:
-                                basketLeft.ComponentColor = wrongColor;  //colorList[nextWrongColor];
-                                basketRight.ComponentColor = rightColor;// GameTools.randomColor(); // colorList[nextColor];
-                                toy.ComponentColor = rightColor; //colorList[nextColor];
-
-
-                                break;
-                            case 2:
-                                basketLeft.ComponentColor = rightColor;// colorList[nextColor];
-                                basketRight.ComponentColor = wrongColor; // colorList[nextWrongColor];
-                                toy.ComponentColor = rightColor;//colorList[nextColor];
-
-
-                                break;
-                            default:
-
-                                break;
+                            talkingBubble.GuiVisible = false;
+                            Components.Remove(talkingBubble);
                         }
-                     
+                        if (itemPlaced == true || firstRun == true)
+                        {
+                            toy.ItemTouched = false;
+                            toy.CompRectX = defaultRect.X;
+                            toy.CompRectY = defaultRect.Y;
+                            firstRun = false;
+                            toy.ItemDraw = true;
+
+                            int nextTexture = rnd.Next(0, floorToys.Count - 1);
+
+
+                            int nextColor = rnd.Next(0, 8);
+                            int nextWrongColor = nextColor;
+                            while (nextWrongColor == nextColor)
+                                nextWrongColor = rnd.Next(0, 8);
+                            int i = rnd.Next(1, 3);
+                            GameTools.randomColor(ref rightColor, 255);
+                            GameTools.randomColor(ref wrongColor, 255);
+                            while (rightColor == wrongColor)
+                                GameTools.randomColor(ref wrongColor, 255);
+
+                            switch (i)
+                            {
+                                case 1:
+                                    basketLeft.ComponentColor = wrongColor;  //colorList[nextWrongColor];
+                                    basketRight.ComponentColor = rightColor;// GameTools.randomColor(); // colorList[nextColor];
+                                    toy.ComponentColor = rightColor; //colorList[nextColor];
+
+
+                                    break;
+                                case 2:
+                                    basketLeft.ComponentColor = rightColor;// colorList[nextColor];
+                                    basketRight.ComponentColor = wrongColor; // colorList[nextWrongColor];
+                                    toy.ComponentColor = rightColor;//colorList[nextColor];
+
+
+                                    break;
+                                default:
+
+                                    break;
+                            }
+
 
                             toy.ComponentTexture = floorToys[nextTexture].ComponentTexture;// textures[nextTexture];
                             toy.ComponentRectangle = rectangles[floorToys[nextTexture].ComponentNumber];
                             boy.ComponentTexture = mannTexture2;
-                      
 
-                        try
-                        {
-                            bool removed = false;
-                            for (int p = 0; p < floorToysI.Count; p++)
+
+                            try
                             {
-                                if (floorToysI[p].ComponentType == floorToys[nextTexture].ComponentType)
+                                bool removed = false;
+                                for (int p = 0; p < floorToysI.Count; p++)
                                 {
-                                    Components.Remove(floorToys[nextTexture]);
-                                    floorToysI.Remove(floorToysI[p]);
-                                    floorToys.Remove(floorToys[nextTexture]);
-
-                                   // textures.Remove(textures[nextTexture]);
-                                   // rectangles.Remove(rectangles[nextTexture]);
-                                    removed = true;
-
-                                }
-                            }
-                            if (removed == false)
-                            {
-                                for (int n = 0; n < floorToysB.Count; n++)
-                                {
-                                    if (floorToysB[n].ComponentType == floorToys[nextTexture].ComponentType)
+                                    if (floorToysI[p].ComponentType == floorToys[nextTexture].ComponentType)
                                     {
                                         Components.Remove(floorToys[nextTexture]);
-                                        floorToysB.Remove(floorToysB[n]);
+                                        floorToysI.Remove(floorToysI[p]);
                                         floorToys.Remove(floorToys[nextTexture]);
 
-                                        //textures.Remove(textures[nextTexture]);
-                                       // rectangles.Remove(rectangles[nextTexture]);
+                                        // textures.Remove(textures[nextTexture]);
+                                        // rectangles.Remove(rectangles[nextTexture]);
+                                        removed = true;
 
                                     }
                                 }
+                                if (removed == false)
+                                {
+                                    for (int n = 0; n < floorToysB.Count; n++)
+                                    {
+                                        if (floorToysB[n].ComponentType == floorToys[nextTexture].ComponentType)
+                                        {
+                                            Components.Remove(floorToys[nextTexture]);
+                                            floorToysB.Remove(floorToysB[n]);
+                                            floorToys.Remove(floorToys[nextTexture]);
+
+                                            //textures.Remove(textures[nextTexture]);
+                                            // rectangles.Remove(rectangles[nextTexture]);
+
+                                        }
+                                    }
+                                }
+
+
+                            }
+                            catch (Exception ex)
+                            {
+
+
                             }
 
 
+
+
+
                         }
-                        catch (Exception ex)
+
+                    }
+                    if (toy.ItemTaken == true && boy.ComponentTexture != mannTexture3 && boy.ComponentTexture != boyDissapointedTxt)
+                    {
+                        boy.ComponentTexture = mannTexture;
+                        boy.ComponentRectangle = mannRect;
+
+                    }
+                    if (toy.ComponentRectangle.Intersects(bskHitL))
+                    {
+                        toysCased++;
+                        if (toy.ComponentColor == basketLeft.ComponentColor)
                         {
+                            gameGUI.CurrentScore = gameGUI.CurrentScore + 1;
+                            gameGUI.InfoText = gameGUI.CurrentScore.ToString() + " / " + gameGUI.MaxScore.ToString();
 
-
+                            boy.ComponentTexture = mannTexture3;
+                            boy.ComponentRectangle = mannRect3;
+                        }
+                        else
+                        {
+                            boy.ComponentTexture = boyDissapointedTxt;
+                            boy.ComponentRectangle = mannRect3;
+                            newRand = rnd.Next(0, newTextures.Count - 1);
+                            Components.Add(addFloorToy(newRand, floorToys.Count));
                         }
 
-
-
-
+                        itemPlaced = true;
+                        timer = 0;
+                        toy.ItemDraw = false;
+                        toy.CompRectX = -10000;
 
                     }
+                    if (toy.ComponentRectangle.Intersects(bskHitR))
+                    {
+                        toysCased++;
+                        if (toy.ComponentColor == basketRight.ComponentColor)
+                        {
+                            gameGUI.CurrentScore = gameGUI.CurrentScore + 1;
+                            gameGUI.InfoText = gameGUI.CurrentScore.ToString() + " / " + gameGUI.MaxScore.ToString();
 
+                            boy.ComponentTexture = mannTexture3;
+                            boy.ComponentRectangle = mannRect3;
+                        }
+                        else
+                        {
+                            boy.ComponentTexture = boyDissapointedTxt;
+                            boy.ComponentRectangle = mannRect3;
+                            newRand = rnd.Next(0, newTextures.Count - 1);
+                            Components.Add(addFloorToy(newRand, floorToys.Count));
+                        }
+                        itemPlaced = true;
+                        timer = 0;
+                        toy.ItemDraw = false;
+                        toy.CompRectX = -10000;
+
+                    }
                 }
-                if (toy.ItemTaken == true && boy.ComponentTexture != mannTexture3 && boy.ComponentTexture != boyDissapointedTxt)
+                else
                 {
-                    boy.ComponentTexture = mannTexture;
-                    boy.ComponentRectangle = mannRect;
-
+                    if (gameStorage.getProgression("lobby") < 5)
+                        gameStorage.saveProgression(5);
+                    this.UnloadContent();
+                    sceneCompleted = true;
                 }
-                if (toy.ComponentRectangle.Intersects(bskHitL))
-                {
-                    toysCased++;
-                    if (toy.ComponentColor == basketLeft.ComponentColor)
-                    {
-                        gameGUI.CurrentScore = gameGUI.CurrentScore + 1;
-                        gameGUI.InfoText = gameGUI.CurrentScore.ToString() + " / " + gameGUI.MaxScore.ToString();
 
-                        boy.ComponentTexture = mannTexture3;
-                        boy.ComponentRectangle = mannRect3;
-                    }
-                    else
-                    {
-                        boy.ComponentTexture = boyDissapointedTxt;
-                        boy.ComponentRectangle = mannRect3;
-                        newRand = rnd.Next(0, newTextures.Count - 1);
-                        Components.Add(addFloorToy(newRand, floorToys.Count));
-                    }
 
-                    itemPlaced = true;
-                    timer = 0;
-                    toy.ItemDraw = false;
-                    toy.CompRectX = -10000;
-
-                }
-                if (toy.ComponentRectangle.Intersects(bskHitR))
-                {
-                    toysCased++;
-                    if (toy.ComponentColor == basketRight.ComponentColor)
-                    {
-                        gameGUI.CurrentScore = gameGUI.CurrentScore + 1;
-                        gameGUI.InfoText = gameGUI.CurrentScore.ToString() + " / " + gameGUI.MaxScore.ToString();
-
-                        boy.ComponentTexture = mannTexture3;
-                        boy.ComponentRectangle = mannRect3;
-                    }
-                    else
-                    {
-                        boy.ComponentTexture = boyDissapointedTxt;
-                        boy.ComponentRectangle = mannRect3;
-                        newRand = rnd.Next(0, newTextures.Count - 1);
-                        Components.Add(addFloorToy(newRand, floorToys.Count));
-                    }
-                    itemPlaced = true;
-                    timer = 0;
-                    toy.ItemDraw = false;
-                    toy.CompRectX = -10000;
-
-                }
+                base.Update(gameTime);
             }
-            else
-            {
-                if (gameStorage.getProgression("lobby") < 5)
-                    gameStorage.saveProgression(5);
-                this.UnloadContent();
-                sceneCompleted = true;
-            }
-
-
-            base.Update(gameTime);
         }
 
 

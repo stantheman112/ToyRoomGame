@@ -1,6 +1,6 @@
 using System;
 
-namespace WindowsPhoneGame1
+namespace Toyroom
 {
 #if WINDOWS || XBOX
     static class Program

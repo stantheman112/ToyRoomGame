@@ -10,13 +10,13 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Input.Touch;
 using RLGames;
-using WindowsPhoneGame1.Components;
-using WindowsPhoneGame1.GameStorage;
+using Toyroom.Components;
+using Toyroom.GameStorage;
 using System.Diagnostics;
 using Microsoft.Devices.Sensors;
 
 
-namespace WindowsPhoneGame1.Scenes
+namespace Toyroom.Scenes
 {
 
 
@@ -213,7 +213,7 @@ namespace WindowsPhoneGame1.Scenes
         public override void Update(GameTime gameTime)
         {
 
-            if (toysCased < numberOfTurns && GamePad.GetState(PlayerIndex.One).Buttons.Back != ButtonState.Pressed)
+            if (toysCased < numberOfTurns && GamePad.GetState(PlayerIndex.One).Buttons.Back != ButtonState.Pressed && restartButtonPushed == false && menuButtonPushed == false)
             {
                 basketRoll();
                 basketCollisionHandling(basketLeft);

@@ -12,7 +12,7 @@ using Microsoft.Xna.Framework.Input.Touch;
 using System.Diagnostics;
 
 
-namespace WindowsPhoneGame1.Components
+namespace Toyroom.Components
 {
     
     /// <summary>

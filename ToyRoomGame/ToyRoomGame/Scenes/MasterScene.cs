@@ -10,8 +10,8 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Input.Touch;
 using RLGames;
-using WindowsPhoneGame1.Components;
-using WindowsPhoneGame1.GameStorage;
+using Toyroom.Components;
+using Toyroom.GameStorage;
 using System.Diagnostics;
 using Microsoft.Devices.Sensors;
 using Microsoft.Phone;
@@ -19,7 +19,7 @@ using Microsoft.Phone.Shell;
 
 
 
-namespace WindowsPhoneGame1.Scenes
+namespace Toyroom.Scenes
 {
 
 
@@ -32,20 +32,20 @@ namespace WindowsPhoneGame1.Scenes
       protected GameData gameStorage;
       protected SpriteBatch spriteBatch;
       protected Texture2D mannTexture, mannTexture2, mannTexture3, basketTxt, boyDissapointedTxt, roomTexture, crayonTxt, guiBubbleTxt, basketLeftTxt, basketOpeningTxt, loadScreen, pauseScreenTxt,
-                          resumeTxt, backTxt, pauseButtonTxt;
+                          resumeTxt, restartTxt, pauseButtonTxt, menuButtonTxt;
       protected Rectangle mannRect, bskHit, basketLeftRect, mannRect2, mannRect3, defaultRect, roomRect,
                           crayonRect, guiBubbleRct, basketOpeningRct, basketRightRect, basketOpeningLRct,
-                          basketOpeningRRct, bskHitL, bskHitR, pauseScreenRect, backRect, resumeRect, pauseButtonRect;
+                          basketOpeningRRct, bskHitL, bskHitR, pauseScreenRect, restartRect, resumeRect, pauseButtonRect, menuButtonRect;
       protected GameGUI gameGUI;
       protected List<Color> colorList = new List<Color>();
       protected List<Texture2D> textures = new List<Texture2D>();
       protected Color rightBsktColor = Color.Red, leftBsktColor = Color.White, itemColor = Color.Wheat, rightColor, wrongColor, tmpColor, floorToyColor;
       protected Random rnd;
-      protected bool itemPlaced = false, firstRun = true, sceneCompleted=false, gamePaused = false, backButtonPushed = false;
+      protected bool itemPlaced = false, firstRun = true, sceneCompleted = false, gamePaused = false, menuButtonPushed = false, restartButtonPushed = false;
       protected int trigger = 90, timer = 0, toysCased=0, casedRight = 0, numberOfTurns,  maxScore=20, rollDirection, newRand, nextTexture;
       protected MoveAbleComponent toy;
       protected SpriteFont spriteFont;
-      protected BasicComponent boy, basketLeft, roomBackground, basketOpening, basketOpeningLeft, basketOpeningRight,basketRight, pauseScreen, resumeButton, backButton, pauseButton;
+      protected BasicComponent boy, basketLeft, roomBackground, basketOpening, basketOpeningLeft, basketOpeningRight,basketRight, pauseScreen, resumeButton, restartButton, pauseButton, menuButton;
       protected ContentManager Content;
       protected GameComponentCollection Components;
       protected List<Rectangle> rectangles = new List<Rectangle>();
@@ -72,6 +72,13 @@ namespace WindowsPhoneGame1.Scenes
             get
             {
                 return sceneCompleted;
+            }
+        }
+        public bool Restart
+        {
+            get
+            {
+                return restartButtonPushed;
             }
         }
         #endregion
@@ -201,6 +208,7 @@ namespace WindowsPhoneGame1.Scenes
                 floorToysI.Add(tmp);
                 return tmp;
             }
+           
         }
 
         protected BasicComponent addFloorToy(int compNumber, int toyNumber, Color originalColor)
@@ -418,30 +426,37 @@ namespace WindowsPhoneGame1.Scenes
         protected void initPauseScreen()
         {
             pauseScreenRect = new Rectangle(0,0, 800, 500);
-            backRect = new Rectangle(50, 400, 130, 130);
+            restartRect = new Rectangle(50, 400, 130, 130);
             resumeRect = new Rectangle(50, 100, 130, 130);
             pauseButtonRect = new Rectangle(10, 10, 50, 50);
+            menuButtonRect = new Rectangle(400, 400, 50, 50);
 
         }
         protected void loadPauseScreen()
         {
              pauseScreenTxt = Content.Load<Texture2D>("Images\\gui\\pausescreen");
              resumeTxt = Content.Load<Texture2D>("Images\\playButton");
-             backTxt = Content.Load<Texture2D>("Images\\gui\\backButton");
+             restartTxt = Content.Load<Texture2D>("Images\\gui\\restartButton");
              pauseButtonTxt = Content.Load<Texture2D>("Images\\gui\\pauseButton");
-             backButton = new BasicComponent(this.Game, backTxt, backRect, Color.White, 0.0f);
+             menuButtonTxt = Content.Load<Texture2D>("Images\\gui\\menuButton");
+             restartButton = new BasicComponent(this.Game, restartTxt, restartRect, Color.White, 0.0f);
              resumeButton = new BasicComponent(this.Game, resumeTxt, resumeRect, Color.White, 0.0f);
              pauseScreen = new BasicComponent(this.Game, pauseScreenTxt, pauseScreenRect, Color.White, 0.0f);
              pauseButton = new BasicComponent(this.Game, pauseButtonTxt, pauseButtonRect, Color.White, 0.0f);
+             menuButton = new BasicComponent(this.Game, menuButtonTxt, menuButtonRect, Color.White, 0.0f);
 
-             backButton.ItemDraw = false;
+
+             restartButton.ItemDraw = false;
              pauseScreen.ItemDraw = false;
              resumeButton.ItemDraw = false;
+             menuButton.ItemDraw = false;
 
              Components.Add(pauseButton);
             
+            
              Components.Add(pauseScreen);
-             Components.Add(backButton);
+             Components.Add(restartButton);
+             Components.Add(menuButton);
              Components.Add(resumeButton);             
              
         
@@ -460,27 +475,35 @@ namespace WindowsPhoneGame1.Scenes
 
               if (gamePaused == true)
               {
-                  if (backButton.compPushed(touchCollection))
+                  if (menuButton.compPushed(touchCollection))
                   {
-                      backButtonPushed = true;
+                      menuButtonPushed = true;                      
+                      return false;
+                  }
+
+                  if (restartButton.compPushed(touchCollection))
+                  {
+                      restartButtonPushed = true;
                       return false;
                   }
                   if (resumeButton.compPushed(touchCollection))
                   {
                       gamePaused = false;
-                      backButton.ItemDraw = false;
+                      restartButton.ItemDraw = false;
                       pauseScreen.ItemDraw = false;
                       resumeButton.ItemDraw = false;
-                      backButtonPushed = false;
+                      menuButton.ItemDraw = false;
+                      restartButtonPushed = false;
                       return gamePaused;
                   }
               }
               if (pauseButton.compPushed(touchCollection) || GamePad.GetState(PlayerIndex.One).Buttons.BigButton == ButtonState.Pressed || gamePaused == true)
               {
                  
-                  backButton.ItemDraw = true;
+                  restartButton.ItemDraw = true;
                   pauseScreen.ItemDraw = true;
                   resumeButton.ItemDraw = true;
+                  menuButton.ItemDraw = true;
                   gamePaused = true;
                   return true;
 

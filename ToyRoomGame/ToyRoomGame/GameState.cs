@@ -10,10 +10,10 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Input.Touch;
 using Microsoft.Xna.Framework.Media;
 using System.Diagnostics;
-using WindowsPhoneGame1.Scenes;
+using Toyroom.Scenes;
 
 
-namespace WindowsPhoneGame1
+namespace Toyroom
 {
     /// <summary>
     /// This is the main type for your game

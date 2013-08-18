@@ -10,10 +10,10 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Input.Touch;
 using Microsoft.Xna.Framework.Media;
 using System.Diagnostics;
-using WindowsPhoneGame1.Scenes;
+using Toyroom.Scenes;
 
 
-namespace WindowsPhoneGame1
+namespace Toyroom
 {
     /// <summary>
     /// This is the main type for your game
@@ -124,6 +124,8 @@ namespace WindowsPhoneGame1
                         Components.Add(lobby);
                         activeScene = 0;
                         lobby.WichLevel = 0;
+                        if (scene1.Restart == true)
+                            lobby.WichLevel = 1;
 
                     }
                     break;
@@ -135,6 +137,8 @@ namespace WindowsPhoneGame1
                         Components.Add(lobby);
                         activeScene = 0;
                         lobby.WichLevel = 0;
+                        if (scene2.Restart == true)
+                            lobby.WichLevel = 2;
 
                     }
                     break;
@@ -146,6 +150,8 @@ namespace WindowsPhoneGame1
                         Components.Add(lobby);
                         activeScene = 0;
                         lobby.WichLevel = 0;
+                        if (scene3.Restart == true)
+                            lobby.WichLevel = 3;
 
                     }
                     break;
@@ -157,6 +163,8 @@ namespace WindowsPhoneGame1
                         Components.Add(lobby);
                         activeScene = 0;
                         lobby.WichLevel = 0;
+                        if (scene4.Restart == true)
+                            lobby.WichLevel = 4;
 
                     }
                     break;
@@ -168,6 +176,8 @@ namespace WindowsPhoneGame1
                         Components.Add(lobby);
                         activeScene = 0;
                         lobby.WichLevel = 0;
+                        if (scene5.Restart == true)
+                            lobby.WichLevel = 5;
 
                     }
                     break;
@@ -179,6 +189,8 @@ namespace WindowsPhoneGame1
                         Components.Add(lobby);
                         activeScene = 0;
                         lobby.WichLevel = 0;
+                        if (scene6.Restart == true)
+                            lobby.WichLevel = 6;
 
                     }
                     break;
@@ -186,6 +198,8 @@ namespace WindowsPhoneGame1
                     Console.WriteLine("Default case");
                     break;
             }
+            
+            
             if (lobby.WichLevel != 0)
             {
                 switch (lobby.WichLevel)

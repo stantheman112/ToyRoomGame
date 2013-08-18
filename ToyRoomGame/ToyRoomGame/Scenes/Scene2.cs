@@ -10,13 +10,13 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Input.Touch;
 using RLGames;
-using WindowsPhoneGame1.Components;
-using WindowsPhoneGame1.GameStorage;
+using Toyroom.Components;
+using Toyroom.GameStorage;
 using System.Diagnostics;
 using Microsoft.Devices.Sensors;
 
 
-namespace WindowsPhoneGame1.Scenes
+namespace Toyroom.Scenes
 {
 
 
@@ -141,7 +141,7 @@ namespace WindowsPhoneGame1.Scenes
 
             backgroundMusic = Content.Load<SoundEffect>("ToyRoom");
             yeah = Content.Load<SoundEffect>("ugotit");
-            ohno = Content.Load<SoundEffect>("ohno2");
+            ohno = Content.Load<SoundEffect>("ohno");
             textures.Add(Content.Load<Texture2D>("Images\\sportscar"));
             textures.Add(Content.Load<Texture2D>("Images\\theplane"));
             textures.Add(Content.Load<Texture2D>("Images\\train"));
@@ -232,7 +232,7 @@ namespace WindowsPhoneGame1.Scenes
 
             if (pauseGame() == false)
             {
-                if (toysCased < numberOfTurns && GamePad.GetState(PlayerIndex.One).Buttons.Back != ButtonState.Pressed && backButtonPushed == false)
+                if (toysCased < numberOfTurns && GamePad.GetState(PlayerIndex.One).Buttons.Back != ButtonState.Pressed && restartButtonPushed == false && menuButtonPushed == false)
                 {
                     if (toy.CompRectX < 360)
                         basketCollisionHandling(basketLeft, true);
@@ -399,6 +399,7 @@ namespace WindowsPhoneGame1.Scenes
                         }
                         else
                         {
+                            ohnoinst.Play();
                             boy.ComponentTexture = boyDissapointedTxt;
                             boy.ComponentRectangle = mannRect3;
                             

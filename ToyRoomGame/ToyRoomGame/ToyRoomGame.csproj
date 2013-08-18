@@ -16,16 +16,17 @@
     <XnaProfile>Reach</XnaProfile>
     <XnaCrossPlatformGroupID>99c56171-a001-464d-9676-7ec644072f66</XnaCrossPlatformGroupID>
     <XnaOutputType>Game</XnaOutputType>
-    <WPTombstoneEnabled>false</WPTombstoneEnabled>
+    <WPTombstoneEnabled>False</WPTombstoneEnabled>
     <XapFilename>$(AssemblyName).xap</XapFilename>
     <SilverlightManifestTemplate>Properties\AppManifest.xml</SilverlightManifestTemplate>
     <XnaWindowsPhoneManifestTemplate>Properties\WMAppManifest.xml</XnaWindowsPhoneManifestTemplate>
-    <TileImage>Background.png</TileImage>
+    <TileImage>gameicon.png</TileImage>
     <TileTitle>ToyRoom</TileTitle>
     <SupportedCultures>
     </SupportedCultures>
     <ApplicationIcon>Game.ico</ApplicationIcon>
-    <Thumbnail>PhoneGameThumb.png</Thumbnail>
+    <Thumbnail>gameicon.png</Thumbnail>
+    <GameStartupType>Toyroom.GameManager</GameStartupType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|Windows Phone' ">
     <DebugSymbols>true</DebugSymbols>
@@ -95,12 +96,15 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />
+    <Content Include="gameicon.png" />
+    <Content Include="gametile.png" />
     <Content Include="PhoneGameThumb.png">
       <XnaPlatformSpecific>true</XnaPlatformSpecific>
     </Content>
     <Content Include="Background.png">
       <XnaPlatformSpecific>true</XnaPlatformSpecific>
     </Content>
+    <Content Include="tile.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ToyRoomContent\ToyRoomContent.contentproj">

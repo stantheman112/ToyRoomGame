@@ -6,7 +6,7 @@ using System.IO;
 using System.IO.IsolatedStorage;
 
 
-namespace WindowsPhoneGame1.GameStorage
+namespace Toyroom.GameStorage
 {
    public class GameData        
     {

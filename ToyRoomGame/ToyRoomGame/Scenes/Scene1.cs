@@ -10,15 +10,15 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Input.Touch;
 using RLGames;
-using WindowsPhoneGame1.Components;
-using WindowsPhoneGame1.GameStorage;
+using Toyroom.Components;
+using Toyroom.GameStorage;
 using System.Diagnostics;
 using Microsoft.Devices.Sensors;
 using Microsoft.Phone.Shell;
 using Microsoft.Phone;
 
 
-namespace WindowsPhoneGame1.Scenes
+namespace Toyroom.Scenes
 {
 
 
@@ -111,6 +111,7 @@ namespace WindowsPhoneGame1.Scenes
             rectangles.Add(new Rectangle(510, 200, 130, 130));//horse
             rectangles.Add(new Rectangle(510, 195, 130, 130));//pad
             rectangles.Add(new Rectangle(510, 190, 130, 100));//racecar
+            rectangles.Add(new Rectangle(510, 190, 150, 120));//dumper
 
 
            
@@ -156,6 +157,7 @@ namespace WindowsPhoneGame1.Scenes
             textures.Add(Content.Load<Texture2D>("Images\\colored\\horse"));
             textures.Add(Content.Load<Texture2D>("Images\\colored\\pad"));
             textures.Add(Content.Load<Texture2D>("Images\\colored\\racecar"));
+            textures.Add(Content.Load<Texture2D>("Images\\colored\\dumper"));
 
 
             basketLeftTxt = Content.Load<Texture2D>("Images\\wheelBasket1");
@@ -216,7 +218,7 @@ namespace WindowsPhoneGame1.Scenes
             if (pauseGame() == false)
             {
 
-                if (toysCased < numberOfTurns && GamePad.GetState(PlayerIndex.One).Buttons.Back != ButtonState.Pressed && backButtonPushed == false)
+                if (toysCased < numberOfTurns && GamePad.GetState(PlayerIndex.One).Buttons.Back != ButtonState.Pressed && restartButtonPushed == false && menuButtonPushed == false)
                 {
 
                     basketRoll();
@@ -340,6 +342,8 @@ namespace WindowsPhoneGame1.Scenes
                     }
                     this.UnloadContent();
                     sceneCompleted = true;
+
+                  
                 }
 
 

@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Input.Touch;
 
 
-namespace WindowsPhoneGame1.Components
+namespace Toyroom.Components
 {
     /// <summary>
     /// This is the master class for all gamecomponenttypes
