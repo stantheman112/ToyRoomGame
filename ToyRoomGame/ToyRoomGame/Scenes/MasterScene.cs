@@ -16,6 +16,7 @@ using System.Diagnostics;
 using Microsoft.Devices.Sensors;
 using Microsoft.Phone;
 using Microsoft.Phone.Shell;
+using Microsoft.Devices;
 
 
 
@@ -58,11 +59,11 @@ namespace Toyroom.Scenes
       protected Vector3 accelReading = new Vector3();
       protected SoundEffect backgroundMusic, yeah, ohno;
 
-      protected SoundEffectInstance yeahinst, ohnoinst;
+      protected SoundEffectInstance yeahinst, ohnoinst, backgroundMusicInst;
       protected GraphicsDeviceManager graphics;    
-      protected bool onTopOfBasket = false, leftOfBasket = false, rightOfBasket = false;
+      protected bool onTopOfBasket = false, leftOfBasket = false, rightOfBasket = false, allCleaned = false;
       protected TouchCollection touchCollection;
-
+      protected VibrateController vibration; 
       protected float rotationDirection = -1f;
 
         #endregion 
@@ -92,6 +93,7 @@ namespace Toyroom.Scenes
             Components = components;
             Content = content;
             colorList = GameTools.elementColors();
+            vibration  = VibrateController.Default;
            
             // TODO: Construct any child components here
         }
@@ -139,9 +141,6 @@ namespace Toyroom.Scenes
             Components.Clear();
             this.rectangles = null;
             this.textures = null;
-
-
-           
             base.UnloadContent();
         }
 
@@ -197,15 +196,17 @@ namespace Toyroom.Scenes
             tmp.ComponentType = "toy" + Convert.ToString(toyNumber);
             tmp.ComponentNumber = compNumber;
             floorToys.Add(tmp);
-            if ((y + tmpRect.Height) < (mannRect.Y + mannRect.Height))
+            if ((y + tmpRect.Height-60) < (mannRect.Y + mannRect.Height))
             {
                 floorToysB.Add(tmp);
+                tmp.DrawOrder = 99;
                 return tmp;
             }
             else
             {
 
                 floorToysI.Add(tmp);
+                tmp.DrawOrder = 205;
                 return tmp;
             }
            
@@ -228,18 +229,21 @@ namespace Toyroom.Scenes
 
       
             BasicComponent tmp = new BasicComponent(this.Game, textures[compNumber], tmpRect, originalColor, (float)rotation);
+            tmp.DrawOrder = -100;
             tmp.ComponentType = "toy" + Convert.ToString(toyNumber);
             tmp.ComponentNumber = compNumber;
             floorToys.Add(tmp);
-            if ((y + tmpRect.Height-50) < (mannRect.Y + mannRect.Height))
+            if ((y + tmpRect.Height-60) < (mannRect.Y + mannRect.Height))
             {
                 floorToysB.Add(tmp);
+                tmp.DrawOrder = 99;
                 return tmp;
             }
             else
             {
 
                 floorToysI.Add(tmp);
+                tmp.DrawOrder = 205;
                 return tmp;
             }
         }
@@ -429,7 +433,7 @@ namespace Toyroom.Scenes
             restartRect = new Rectangle(50, 400, 130, 130);
             resumeRect = new Rectangle(50, 100, 130, 130);
             pauseButtonRect = new Rectangle(10, 10, 50, 50);
-            menuButtonRect = new Rectangle(400, 400, 50, 50);
+            menuButtonRect = new Rectangle(400, 400, 80, 80);
 
         }
         protected void loadPauseScreen()
@@ -451,8 +455,13 @@ namespace Toyroom.Scenes
              resumeButton.ItemDraw = false;
              menuButton.ItemDraw = false;
 
-             Components.Add(pauseButton);
-            
+             pauseButton.DrawOrder = 1012;
+             pauseScreen.DrawOrder = 1000;
+             menuButton.DrawOrder = 1013;
+            resumeButton.DrawOrder = 1014;
+            restartButton.DrawOrder = 1015;
+
+             Components.Add(pauseButton);         
             
              Components.Add(pauseScreen);
              Components.Add(restartButton);
@@ -488,6 +497,7 @@ namespace Toyroom.Scenes
                   }
                   if (resumeButton.compPushed(touchCollection))
                   {
+                      pauseButton.ItemDraw = true;
                       gamePaused = false;
                       restartButton.ItemDraw = false;
                       pauseScreen.ItemDraw = false;
@@ -499,7 +509,7 @@ namespace Toyroom.Scenes
               }
               if (pauseButton.compPushed(touchCollection) || GamePad.GetState(PlayerIndex.One).Buttons.BigButton == ButtonState.Pressed || gamePaused == true)
               {
-                 
+                  pauseButton.ItemDraw = false;
                   restartButton.ItemDraw = true;
                   pauseScreen.ItemDraw = true;
                   resumeButton.ItemDraw = true;

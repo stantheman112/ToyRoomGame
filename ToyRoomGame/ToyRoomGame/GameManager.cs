@@ -119,78 +119,100 @@ namespace Toyroom
                 case 1:
                     if (scene1.SceneCompleted == true)
                     {
-                        Components.Remove(scene1);
-                        lobby = new Lobby(this, Content, Components);
-                        Components.Add(lobby);
-                        activeScene = 0;
-                        lobby.WichLevel = 0;
                         if (scene1.Restart == true)
                             lobby.WichLevel = 1;
+                        else
+                        {
+                            Components.Remove(scene1);
+                            lobby = new Lobby(this, Content, Components);
+                            Components.Add(lobby);
+                            activeScene = 0;
+                            lobby.WichLevel = 0;
+                        }
+                      
 
                     }
                     break;
                 case 2:
                     if (scene2.SceneCompleted == true)
                     {
-                        Components.Remove(scene2);
-                        lobby = new Lobby(this, Content, Components);
-                        Components.Add(lobby);
-                        activeScene = 0;
-                        lobby.WichLevel = 0;
                         if (scene2.Restart == true)
                             lobby.WichLevel = 2;
+                        else
+                        {
+                            Components.Remove(scene2);
+                            lobby = new Lobby(this, Content, Components);
+                            Components.Add(lobby);
+                            activeScene = 0;
+                            lobby.WichLevel = 0;
+                        }
+                       
 
                     }
                     break;
                 case 3:
                     if (scene3.SceneCompleted == true)
                     {
-                        Components.Remove(scene3);
-                        lobby = new Lobby(this, Content, Components);
-                        Components.Add(lobby);
-                        activeScene = 0;
-                        lobby.WichLevel = 0;
                         if (scene3.Restart == true)
                             lobby.WichLevel = 3;
+                        else
+                        {
+                            Components.Remove(scene3);
+                            lobby = new Lobby(this, Content, Components);
+                            Components.Add(lobby);
+                            activeScene = 0;
+                            lobby.WichLevel = 0;
+                        }
+                      
 
                     }
                     break;
                 case 4:
                     if (scene4.SceneCompleted == true)
                     {
-                        Components.Remove(scene4);
-                        lobby = new Lobby(this, Content, Components);
-                        Components.Add(lobby);
-                        activeScene = 0;
-                        lobby.WichLevel = 0;
                         if (scene4.Restart == true)
                             lobby.WichLevel = 4;
+                        else
+                        {
+                            Components.Remove(scene4);
+                            lobby = new Lobby(this, Content, Components);
+                            Components.Add(lobby);
+                            activeScene = 0;
+                            lobby.WichLevel = 0;
+                        }
 
                     }
                     break;
                 case 5:
                     if (scene5.SceneCompleted == true)
                     {
-                        Components.Remove(scene5);
-                        lobby = new Lobby(this, Content, Components);
-                        Components.Add(lobby);
-                        activeScene = 0;
-                        lobby.WichLevel = 0;
                         if (scene5.Restart == true)
                             lobby.WichLevel = 5;
+                        else
+                        {
+                            Components.Remove(scene5);
+                            lobby = new Lobby(this, Content, Components);
+                            Components.Add(lobby);
+                            activeScene = 0;
+                            lobby.WichLevel = 0;
+                        }
 
                     }
                     break;
                 case 6:
                     if (scene6.SceneCompleted == true)
                     {
-                        Components.Remove(scene6);
-                        lobby = new Lobby(this, Content, Components);
-                        Components.Add(lobby);
-                        activeScene = 0;
-                        lobby.WichLevel = 0;
                         if (scene6.Restart == true)
                             lobby.WichLevel = 6;
+                        else
+                        {
+                            Components.Remove(scene6);
+                            lobby = new Lobby(this, Content, Components);
+                            Components.Add(lobby);
+                            activeScene = 0;
+                            lobby.WichLevel = 0;
+
+                        }
 
                     }
                     break;

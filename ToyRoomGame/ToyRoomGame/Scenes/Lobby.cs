@@ -117,7 +117,7 @@ namespace Toyroom.Scenes
             int lvlHorPos = 220;
             for (int i = 0; i < 6; i++)
             {
-                if (i == sceneProgression)
+                if (i == sceneProgression-1)
                 {
                     levels.Add(new BasicComponent(this.Game, lvlTxtsG[i], new Rectangle(lvlHorPos, 112,40, 48), Color.White, 0.0f));
                    //levels[i].ComponentType = "hei";// (i + 1).ToString();
@@ -156,11 +156,12 @@ namespace Toyroom.Scenes
         protected override void UnloadContent()
         {
 
-            Components.Remove(lobby);
-            Components.Remove(gameGUI);
-            for (int i = 0; i < levels.Count; i++)
-                Components.Remove(levels[i]);
-            Components.Remove(playButton);
+            //Components.Remove(lobby);
+            //Components.Remove(gameGUI);
+            //for (int i = 0; i < levels.Count; i++)
+            //    Components.Remove(levels[i]);
+            //Components.Remove(playButton);
+            Components.Clear();
             base.UnloadContent();
         }
 
@@ -173,8 +174,8 @@ namespace Toyroom.Scenes
 
             if (playButton.compPushed(touchCollection))
             {
-               // wichLevel = gameData.getProgression("lobby")+1;
-                wichLevel = 5;
+                wichLevel = gameData.getProgression("lobby");
+               // wichLevel = 5;
                 this.UnloadContent();
           
             }

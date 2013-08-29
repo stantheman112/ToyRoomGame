@@ -14,6 +14,7 @@ using Toyroom.Components;
 using Toyroom.GameStorage;
 using System.Diagnostics;
 using Microsoft.Devices.Sensors;
+using Microsoft.Devices;
 
 
 namespace Toyroom.Scenes
@@ -63,7 +64,7 @@ namespace Toyroom.Scenes
         /// </summary>
         public override void Initialize()
         {
-          
+            
             accelSensor = new Accelerometer();
             accelSensor.Start();
             accelSensor.ReadingChanged += accelSensor_ReadingChanged;
@@ -140,7 +141,7 @@ namespace Toyroom.Scenes
             basketOpeningTxt = Content.Load<Texture2D>("Images\\wheelBasket2");
 
             backgroundMusic = Content.Load<SoundEffect>("ToyRoom");
-            yeah = Content.Load<SoundEffect>("ugotit");
+            yeah = Content.Load<SoundEffect>("yeah2");
             ohno = Content.Load<SoundEffect>("ohno");
             textures.Add(Content.Load<Texture2D>("Images\\sportscar"));
             textures.Add(Content.Load<Texture2D>("Images\\theplane"));
@@ -185,7 +186,14 @@ namespace Toyroom.Scenes
             gameGUI = new GameGUI(this.Game, spriteFont, new Vector2(10,10), "0/"+textures.Count, Color.Black);
             gameGUI.MaxScore = textures.Count;
 
-
+            roomBackground.DrawOrder = -100;
+            basketLeft.DrawOrder = 200;
+              basketRight.DrawOrder = 198;
+            toy.DrawOrder = 199;
+            boy.DrawOrder = 100;
+            basketOpeningLeft.DrawOrder = 198;
+            basketOpeningRight.DrawOrder = 201;
+            basketRight.DrawOrder = 202;
 
 
 
@@ -371,6 +379,7 @@ namespace Toyroom.Scenes
                         }
                         else
                         {
+                            vibration.Start(TimeSpan.FromMilliseconds(500));
                             ohnoinst.Play();
                             boy.ComponentTexture = boyDissapointedTxt;
                             boy.ComponentRectangle = mannRect3;
@@ -399,6 +408,7 @@ namespace Toyroom.Scenes
                         }
                         else
                         {
+                            vibration.Start(TimeSpan.FromMilliseconds(500));
                             ohnoinst.Play();
                             boy.ComponentTexture = boyDissapointedTxt;
                             boy.ComponentRectangle = mannRect3;

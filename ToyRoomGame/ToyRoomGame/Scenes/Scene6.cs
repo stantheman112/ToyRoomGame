@@ -41,8 +41,8 @@ namespace Toyroom.Scenes
             Content = content;
             colorList = GameTools.elementColors();
             gameStorage = new GameData("scene6");
-            if(gameStorage.fileExists(gameStorage.FileName)==false)
-                 gameStorage.saveScore(0, 0);
+            //if(gameStorage.fileExists(gameStorage.FileName)==false)
+            //     gameStorage.saveScore(0, 0);
            
             // TODO: Construct any child components here
         }
@@ -96,8 +96,8 @@ namespace Toyroom.Scenes
             rectangles.Add(new Rectangle(530, 200, 130, 120)); //pad
             rectangles.Add(new Rectangle(510, 150, 120, 120)); //horse
             rectangles.Add(new Rectangle(510, 200, 120, 90)); //racecar
-          
-          
+
+            initPauseScreen();
 
             numberOfTurns = rectangles.Count;
           
@@ -115,7 +115,14 @@ namespace Toyroom.Scenes
         protected override void LoadContent()
         {
             loadScreen = Content.Load<Texture2D>("Images\\gui\\loadscreen");
-            loadScreenDraw(loadScreen, new Vector2(-90, -70));
+            loadScreenDraw(loadScreen, new Vector2(-90, -20));
+            loadPauseScreen();
+
+
+            yeah = Content.Load<SoundEffect>("ugotit");
+            ohno = Content.Load<SoundEffect>("ohno");
+            backgroundMusic = Content.Load<SoundEffect>("ToyRoom");
+
       
             mannTexture = Content.Load<Texture2D>("Images\\theBoy");
             mannTexture2 = Content.Load<Texture2D>("Images\\theBoyShowing");
@@ -150,6 +157,10 @@ namespace Toyroom.Scenes
             basketTxt = Content.Load<Texture2D>("Images\\wheelBasket1");
             basketOpeningTxt = Content.Load<Texture2D>("Images\\wheelBasket2");
 
+            yeahinst = yeah.CreateInstance();
+            ohnoinst = ohno.CreateInstance();
+            backgroundMusicInst = backgroundMusic.CreateInstance();
+
             spriteFont = Content.Load<SpriteFont>("sf20");
             talkingBubble = new GameGUI(this.Game, spriteFont, new Vector2(70, 100), "Kasper! \n the toycolors have gone \n crazy again! " +
                "they will \n only go  into  the basket\n  if the basket has the \n same color as themselves! \n You must color the basket \n in  the right color! \n Hurry or more toys will come!", Color.Black, 0f, new Vector2(0, 0), 1f, 0f);
@@ -164,10 +175,17 @@ namespace Toyroom.Scenes
             toy = new MoveAbleComponent(this.Game, textures[0], rectangles[0], Color.Orange, 0.0f);
             gameGUI = new GameGUI(this.Game, spriteFont, new Vector2(10,50), "0/"+numberOfTurns.ToString(), Color.Black);
             gameGUI.MaxScore = rectangles.Count;
+          
+
+            roomBackground.DrawOrder = -100;
+            basketLeft.DrawOrder = 200;
+            basketOpening.DrawOrder = 198;
+            toy.DrawOrder = 199;
+            boy.DrawOrder = 100;
+            talkingBubble.DrawOrder = 1112;
+
+
             Components.Add(roomBackground);
-
-         
-
             for (int i = 0; i < textures.Count; i++)
             {  
                     addFloorToy(i, i);
@@ -210,7 +228,7 @@ namespace Toyroom.Scenes
             if (pauseGame() == false)
             {
 
-                if (toysCased < numberOfTurns && GamePad.GetState(PlayerIndex.One).Buttons.Back != ButtonState.Pressed && restartButtonPushed == false && menuButtonPushed == false)
+                if (toysCased < numberOfTurns && GamePad.GetState(PlayerIndex.One).Buttons.Back != ButtonState.Pressed && restartButtonPushed == false && menuButtonPushed == false && allCleaned == false)
                 {
                     basketRoll();
                     basketCollisionHandling(basketLeft);
@@ -234,8 +252,10 @@ namespace Toyroom.Scenes
                         {
                             talkingBubble.GuiVisible = false;
                             Components.Remove(talkingBubble);
+                            backgroundMusicInst.Play();
                         }
-
+                        if (backgroundMusicInst.State.ToString() != "Playing")
+                            backgroundMusicInst.Play();
 
                         if (itemPlaced == true || firstRun == true)
                         {
@@ -279,8 +299,7 @@ namespace Toyroom.Scenes
                                         floorToys.Remove(floorToys[nextTexture]);
 
 
-                                        //    textures.Remove(textures[nextTexture]);
-                                        //     rectangles.Remove(rectangles[nextTexture]);
+                                     
                                         removed = true;
 
                                     }
@@ -295,8 +314,7 @@ namespace Toyroom.Scenes
                                             floorToysB.Remove(floorToysB[n]);
                                             floorToys.Remove(floorToys[nextTexture]);
 
-                                            //     textures.Remove(textures[nextTexture]);
-                                            //    rectangles.Remove(rectangles[nextTexture]);
+                                          
 
                                         }
                                     }
@@ -326,14 +344,15 @@ namespace Toyroom.Scenes
                             gameGUI.CurrentScore = gameGUI.CurrentScore + 1;
                             gameGUI.InfoText = gameGUI.CurrentScore.ToString() + "/" + maxScore.ToString();
 
-
+                            yeahinst.Play();
                             boy.ComponentTexture = mannTexture3;
                             boy.ComponentRectangle = mannRect3;
                             casedRight++;
                         }
                         else
                         {
-
+                            vibration.Start(TimeSpan.FromMilliseconds(500));
+                            ohnoinst.Play();
                             newRand = rnd.Next(0, textures.Count - 1);
                             Components.Add(addFloorToy(newRand, floorToys.Count));
                             boy.ComponentTexture = boyDissapointedTxt;
@@ -345,6 +364,9 @@ namespace Toyroom.Scenes
                         timer = 0;
                         toy.ItemDraw = false;
                         toy.CompRectX = -10000;
+                        if (floorToys.Count == 0)
+                            allCleaned = true;
+
 
                     }
                 }
@@ -352,6 +374,7 @@ namespace Toyroom.Scenes
                 {
                     if (gameStorage.getProgression("lobby") < 6)
                         gameStorage.saveProgression(6);
+                    this.UnloadContent();
                     sceneCompleted = true;
                 }
 

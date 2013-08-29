@@ -129,7 +129,7 @@ namespace Toyroom.Scenes
             loadScreenDraw(loadScreen, new Vector2(-90, -70));
 
             backgroundMusic = Content.Load<SoundEffect>("ToyRoom");
-         
+            yeah = Content.Load<SoundEffect>("ugotit");
             mannTexture = Content.Load<Texture2D>("Images\\theBoy");
             mannTexture2 = Content.Load<Texture2D>("Images\\theBoyShowing");
             mannTexture3 = Content.Load<Texture2D>("Images\\boytup");
@@ -161,7 +161,7 @@ namespace Toyroom.Scenes
 
 
             basketLeftTxt = Content.Load<Texture2D>("Images\\wheelBasket1");
-      
+            yeahinst = yeah.CreateInstance();
             spriteFont = Content.Load<SpriteFont>("sf20");
             spriteFont.LineSpacing = 25;
             spriteFont.Spacing = 1;
@@ -170,13 +170,18 @@ namespace Toyroom.Scenes
             basketLeft = new BasicComponent(this.Game, basketLeftTxt, basketLeftRect, Color.LightBlue, 0.0f);
             basketOpening = new BasicComponent(this.Game, basketOpeningTxt, basketOpeningRct, Color.LightBlue, 0.0f);
             roomBackground = new BasicComponent(this.Game, roomTexture, roomRect, Color.White, 0.0f);
+            roomBackground.DrawOrder = -100;
             toy = new MoveAbleComponent(this.Game, textures[0], defaultRect, Color.White, 0.0f);
             talkingBubble = new GameGUI(this.Game, spriteFont, new Vector2(220, 120), "Hello friend \n will you help  me \n clean my room?", Color.Black, 0f, new Vector2(0, 0), 1f, 0f);
           talkingBubble.GuiBackgroundRect = guiBubbleRct;
           talkingBubble.GuiBackgroundTxt = guiBubbleTxt;
           talkingBubble.GuiVisible = true;
+          basketLeft.DrawOrder = 200;
+          basketOpening.DrawOrder = 198;
+          toy.DrawOrder = 199;
+          boy.DrawOrder = 100;
            // gameGUI.MaxScore = 20;
-
+          toy.CompRectX = -10000;
 
             Components.Add(roomBackground);
            // Components.Add(gameGUI);
@@ -314,6 +319,7 @@ namespace Toyroom.Scenes
                     if (toy.ComponentRectangle.Intersects(bskHit))
                     {
                         toysCased++;
+                        yeahinst.Play();
                         boy.ComponentTexture = mannTexture3;
                         boy.ComponentRectangle = mannRect3;
                         if (nextTexture < 6)
@@ -343,7 +349,7 @@ namespace Toyroom.Scenes
                     this.UnloadContent();
                     sceneCompleted = true;
 
-                  
+
                 }
 
 
