@@ -9,8 +9,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Input.Touch;
 using Microsoft.Xna.Framework.Media;
-using System.Diagnostics;
 using Toyroom.Scenes;
+
 
 
 namespace Toyroom
@@ -20,8 +20,7 @@ namespace Toyroom
     /// </summary>
     public class GameManager : Microsoft.Xna.Framework.Game
     {
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;        
+        GraphicsDeviceManager graphics;            
         Lobby lobby;
         Scene1 scene1;
         Scene2 scene2;
@@ -29,21 +28,21 @@ namespace Toyroom
         Scene4 scene4;
         Scene5 scene5;
         Scene6 scene6;
+        Scene7 scene7;
+     
        
 
-        private int activeScene = 0;
+        private int activeScene = 0, wichLevel = -1;
      
         public GameManager()
         {
             graphics = new GraphicsDeviceManager(this);
-            Content.RootDirectory = "Content";
-            // Frame rate is 30 fps by default for Windows Phone.
+            Content.RootDirectory = "Content";         
             TargetElapsedTime = TimeSpan.FromTicks(333333);
-            // Extend battery life under lock.
+       
             InactiveSleepTime = TimeSpan.FromSeconds(1);
             lobby = new Lobby(this, Content, Components);
-          //  scene1 = new Scene1(this, Content, Components);
-
+        
             Components.Add(lobby);
            
             
@@ -65,24 +64,11 @@ namespace Toyroom
                               DisplayOrientation.LandscapeLeft;
 
             graphics.IsFullScreen = true;
-           
+            graphics.GraphicsDevice.Clear(Color.Lime);
             base.Initialize();
         }
 
-        /// <summary>
-        /// LoadContent will be called once per game and is the place to load
-        /// all of your content.
-        /// </summary>
-        protected override void LoadContent()
-        {
-            // // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-
-           
-         
-
-            // TODO: use this.Content to load your game content here
-        }
+      
 
         /// <summary>
         /// UnloadContent will be called once per game and is the place to unload
@@ -90,7 +76,7 @@ namespace Toyroom
         /// </summary>
         protected override void UnloadContent()
         {
-            // TODO: Unload any non ContentManager content here
+            
         }
 
         /// <summary>
@@ -100,6 +86,7 @@ namespace Toyroom
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
             {
@@ -110,8 +97,12 @@ namespace Toyroom
                     this.Exit();
                 }
             }
+
+            if (lobby != null)
+                wichLevel = lobby.WichLevel;
+            else
+                wichLevel = -1;
                
-           
           
            
             switch (activeScene)
@@ -120,14 +111,18 @@ namespace Toyroom
                     if (scene1.SceneCompleted == true)
                     {
                         if (scene1.Restart == true)
-                            lobby.WichLevel = 1;
+                            wichLevel = 1;
                         else
                         {
                             Components.Remove(scene1);
+                         Content.Unload();
+                            scene1 = null;
+                           
+                            Content.Unload();
                             lobby = new Lobby(this, Content, Components);
                             Components.Add(lobby);
                             activeScene = 0;
-                            lobby.WichLevel = 0;
+                            wichLevel = 0;
                         }
                       
 
@@ -137,14 +132,18 @@ namespace Toyroom
                     if (scene2.SceneCompleted == true)
                     {
                         if (scene2.Restart == true)
-                            lobby.WichLevel = 2;
+                            wichLevel = 2;
                         else
                         {
                             Components.Remove(scene2);
+                            Content.Unload();
+                            scene2 = null;
+                        
+                            Content.Unload();
                             lobby = new Lobby(this, Content, Components);
                             Components.Add(lobby);
                             activeScene = 0;
-                            lobby.WichLevel = 0;
+                            wichLevel = 0;
                         }
                        
 
@@ -154,14 +153,18 @@ namespace Toyroom
                     if (scene3.SceneCompleted == true)
                     {
                         if (scene3.Restart == true)
-                            lobby.WichLevel = 3;
+                            wichLevel = 3;
                         else
                         {
                             Components.Remove(scene3);
+                            Content.Unload();
+                            scene3 = null;
+                            
+                            Content.Unload();
                             lobby = new Lobby(this, Content, Components);
                             Components.Add(lobby);
                             activeScene = 0;
-                            lobby.WichLevel = 0;
+                            wichLevel = 0;
                         }
                       
 
@@ -171,14 +174,17 @@ namespace Toyroom
                     if (scene4.SceneCompleted == true)
                     {
                         if (scene4.Restart == true)
-                            lobby.WichLevel = 4;
+                            wichLevel = 4;
                         else
                         {
                             Components.Remove(scene4);
+                            Content.Unload();
+                            scene4 = null;                           
+                            Content.Unload();
                             lobby = new Lobby(this, Content, Components);
                             Components.Add(lobby);
                             activeScene = 0;
-                            lobby.WichLevel = 0;
+                            wichLevel = 0;
                         }
 
                     }
@@ -187,14 +193,17 @@ namespace Toyroom
                     if (scene5.SceneCompleted == true)
                     {
                         if (scene5.Restart == true)
-                            lobby.WichLevel = 5;
+                            wichLevel = 5;
                         else
                         {
                             Components.Remove(scene5);
+                            Content.Unload();
+                            scene5 = null;                           
+                            Content.Unload();
                             lobby = new Lobby(this, Content, Components);
                             Components.Add(lobby);
                             activeScene = 0;
-                            lobby.WichLevel = 0;
+                            wichLevel = 0;
                         }
 
                     }
@@ -203,73 +212,116 @@ namespace Toyroom
                     if (scene6.SceneCompleted == true)
                     {
                         if (scene6.Restart == true)
-                            lobby.WichLevel = 6;
+                            wichLevel = 6;
                         else
                         {
                             Components.Remove(scene6);
+                            Content.Unload();
+                            scene6 = null;                          
+                            Content.Unload();
                             lobby = new Lobby(this, Content, Components);
                             Components.Add(lobby);
                             activeScene = 0;
-                            lobby.WichLevel = 0;
+                            wichLevel = 0;
+
+                        }
+
+                    }
+                    break;
+                case 7:
+                    if (scene7.SceneCompleted == true)
+                    {
+                        if (scene7.Restart == true)
+                            wichLevel = 7;
+                        else
+                        {
+                            Components.Remove(scene7);
+                            Content.Unload();
+                            scene7 = null;
+                            Content.Unload();
+                            lobby = new Lobby(this, Content, Components);
+                            Components.Add(lobby);
+                            activeScene = 0;
+                            wichLevel = 0;
 
                         }
 
                     }
                     break;
                 default:
-                    Console.WriteLine("Default case");
+                  
                     break;
             }
             
             
-            if (lobby.WichLevel != 0)
+            if (wichLevel != 0)
             {
-                switch (lobby.WichLevel)
+                switch (wichLevel)
                 {
                     case 1:
+                       
                         scene1 = new Scene1(this, Content, Components);
                         Components.Add(scene1);
-                        Components.Remove(lobby);
+                        Components.Remove(lobby);                     
+                       lobby = null;                       
                         activeScene = 1;
-                        lobby.WichLevel = -1;                        
+                                         
                         break;
                     case 2:
+                       
                         scene2 = new Scene2(this, Content, Components);
                         Components.Add(scene2);
-                        Components.Remove(lobby);
+                        Components.Remove(lobby);                    
+                       lobby = null; 
                         activeScene = 2;
-                        lobby.WichLevel = -1;  
                         break;
                     case 3:
+                        Content.Unload();
                         scene3 = new Scene3(this, Content, Components);
                         Components.Add(scene3);
-                        Components.Remove(lobby);
+                        Components.Remove(lobby);                     
+                         lobby = null;
                         activeScene = 3;
-                        lobby.WichLevel = -1;
+                        wichLevel = -1;
                         break;
                     case 4:
+                        Content.Unload();
                         scene4 = new Scene4(this, Content, Components);
                         Components.Add(scene4);
-                        Components.Remove(lobby);
+                        Components.Remove(lobby);                       
+                        lobby = null;
                         activeScene = 4;
-                        lobby.WichLevel = -1;
+                        wichLevel = -1;
                         break;
                     case 5:
+                      
                         scene5 = new Scene5(this, Content, Components);
                         Components.Add(scene5);
-                        Components.Remove(lobby);
+                        Components.Remove(lobby);                   
+                        lobby = null; 
                         activeScene = 5;
-                        lobby.WichLevel = -1;
+                        wichLevel = -1;
                         break;
                     case 6:
+                        Content.Unload();
                         scene6 = new Scene6(this, Content, Components);
                         Components.Add(scene6);
-                        Components.Remove(lobby);
+                        Components.Remove(lobby);                      
+                       lobby = null; 
                         activeScene = 6;
-                        lobby.WichLevel = -1;
+                        wichLevel = -1;
+                        break;
+                    case 7 :
+                        Content.Unload();
+                        scene7 = new Scene7(this, Content, Components);
+                        Components.Add(scene7);
+                        Components.Remove(lobby);                     
+                        lobby = null; 
+                        activeScene = 7;
+                        wichLevel = -1;
                         break;
                     default:
-                        Console.WriteLine("Default case");
+                      
                         break;
                 }
 
@@ -285,7 +337,8 @@ namespace Toyroom
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-                                   base.Draw(gameTime);
+            graphics.GraphicsDevice.Clear(Color.Lime);
+            base.Draw(gameTime);
         }
     }
 }

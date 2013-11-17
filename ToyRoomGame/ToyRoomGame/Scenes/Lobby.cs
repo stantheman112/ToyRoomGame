@@ -11,7 +11,8 @@ using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Input.Touch;
 using RLGames;
 using Toyroom.Components;
-using System.Diagnostics;
+using Microsoft.Devices;
+
 
 namespace Toyroom.Scenes
 {
@@ -25,21 +26,22 @@ namespace Toyroom.Scenes
         #region private variables
 
         SpriteBatch spriteBatch;
-        Texture2D lobbyText, playBtnText;
-        List<Texture2D> lvlTxts, lvlTxtsG;
-        Rectangle lobbyRect, playBtnRect;
-        GameGUI gameGUI;     
+        Texture2D lobbyText, playBtnText, playBtnChngText;
+        List<Texture2D> lvlTxts, lvlTxtsG, lvlTxtsCurr;
+        Rectangle lobbyRect, playBtnRect, playBtnChngRct;
+        
         SpriteFont sf50, sf32;
-        BasicComponent lobby, playButton, box;
+        BasicComponent lobby, playButton;
         List<BasicComponent> levels;
-        ContentManager Content;
+        public ContentManager Content { get; set;}
         GameComponentCollection Components;
-       
+        private VibrateController vibration; 
         List<Rectangle> rectangles = new List<Rectangle>();
-        private int wichLevel = 0, sceneProgression=1; //lobby = 0
+        private int wichLevel = 0, sceneProgression=0, timer = 0; //lobby = 0
         private TouchCollection touchCollection;
-        GameState gameState;
+       
         GameStorage.GameData gameData = new GameStorage.GameData("lobby");
+      
         #endregion 
         #region public properties
         public int WichLevel {
@@ -63,11 +65,13 @@ namespace Toyroom.Scenes
         {
            
             Components = components;
+            
             Content = content;
-            gameState = new GameState(this.Game);
-            sceneProgression = gameData.getProgression("lobby");
+         
            
-            // TODO: Construct any child components here
+            sceneProgression = gameData.getProgression("lobby");
+            vibration = VibrateController.Default;           
+          
         }
 
 
@@ -83,63 +87,70 @@ namespace Toyroom.Scenes
             // TODO: Add your initialization code here
            lvlTxts = new List<Texture2D>();
            lvlTxtsG = new List<Texture2D>();
+           lvlTxtsCurr = new List<Texture2D>();
             spriteBatch = new SpriteBatch(Game.GraphicsDevice);
             levels = new List<BasicComponent>();
-           
-           
-
-            lobbyRect = new Rectangle(0,0,800, 480);           
-            playBtnRect = new Rectangle(380, 180, 100, 100);
-           
-         
+            lobbyRect = new Rectangle(0,0,800, 480);
+            playBtnRect = new Rectangle(350, 200, 150, 150);
+            playBtnChngRct = new Rectangle(350, 200, 150, 150); 
             base.Initialize();
         }
        
 
         protected override void LoadContent()
         {
+            
             for (int i = 1; i < 7; i++)
             {
-                 Texture2D tmp, tmpg;
-              
-                        tmp = Content.Load<Texture2D>("Images\\gui\\"+i.ToString()+"lvl");              
-                        tmpg = Content.Load<Texture2D>("Images\\gui\\"+i.ToString()+"lvlg");
+                Texture2D tmp, tmpg, tmpcurr;
+                tmp = Content.Load<Texture2D>("Images\\gui\\lvl" + i.ToString() + "clear");
+                tmpg = Content.Load<Texture2D>("Images\\gui\\lvl" + i.ToString() + "nclear");
+                tmpcurr = Content.Load<Texture2D>("Images\\gui\\lvl" + i.ToString() + "curr");
                 lvlTxts.Add(tmp);
                 lvlTxtsG.Add(tmpg);
+                lvlTxtsCurr.Add(tmpcurr);
             }
             lobbyText = Content.Load<Texture2D>("Images\\lobby");
             playBtnText = Content.Load<Texture2D>("Images\\playButton");
+            playBtnChngText = Content.Load<Texture2D>("Images\\gui\\playButtonChanged");
            
             sf50 = Content.Load<SpriteFont>("sf50");
 
             sf32 = Content.Load<SpriteFont>("sf32");
-            gameGUI = new GameGUI(this.Game, sf50, new Vector2(250, 10), "Toyroom", Color.Black);
-            int lvlHorPos = 220;
+         
+            int lvlHorPos = 200;
             for (int i = 0; i < 6; i++)
             {
-                if (i == sceneProgression-1)
+                if (i < sceneProgression)
                 {
-                    levels.Add(new BasicComponent(this.Game, lvlTxtsG[i], new Rectangle(lvlHorPos, 112,40, 48), Color.White, 0.0f));
-                   //levels[i].ComponentType = "hei";// (i + 1).ToString();
+                    BasicComponent tmplvl = new BasicComponent(this.Game, lvlTxts[i], new Rectangle(lvlHorPos, 112, 80, 88), Color.White, 0.0f);
+                    levels.Add(tmplvl);
+                    tmplvl.Dispose();
                    
                 }
-                else
+                else if(i > sceneProgression  && (sceneProgression!=0 || i>0))
                 {
-
-                    levels.Add(new BasicComponent(this.Game, lvlTxts[i], new Rectangle(lvlHorPos, 112, 40, 48), Color.White, 0.0f));
-                   // levels[i].ComponentType = (i + 1).ToString();
+                    BasicComponent tmplvl = new BasicComponent(this.Game, lvlTxtsG[i], new Rectangle(lvlHorPos, 112, 80, 88), Color.White, 0.0f);
+                    levels.Add(tmplvl);
+                    tmplvl.Dispose();
+                   
+                }
+                else if (i == sceneProgression || (sceneProgression == 0 && i == 0))
+                {
+                    BasicComponent tmplvl = new BasicComponent(this.Game, lvlTxtsCurr[i], new Rectangle(lvlHorPos, 112, 80, 88), Color.White, 0.0f);
+                    levels.Add(tmplvl);
+                    tmplvl.Dispose();
                 }
                
-                lvlHorPos = lvlHorPos + 70;
+                lvlHorPos = lvlHorPos + 85;
             }
 
-         //   gameGUI = new GameGUI(this.Game, spriteFont, new Vector2(0, 0), "Dette er en test", Color.White);
-            lobby = new BasicComponent(this.Game, lobbyText, lobbyRect, Color.White, 0.0f);
-            playButton = new BasicComponent(this.Game, playBtnText, playBtnRect, Color.White, 0.0f);
 
+            playButton = new BasicComponent(this.Game, playBtnText, playBtnRect, Color.White, 0.0f);
+            lobby = new BasicComponent(this.Game, lobbyText, lobbyRect, 0f);
           
             Components.Add(lobby);
-         // Components.Add(gameGUI);
+      
             for (int i = 0; i < levels.Count; i++)
             {
                 levels[i].ComponentType = Convert.ToString(i + 1); ;
@@ -148,21 +159,35 @@ namespace Toyroom.Scenes
            
             Components.Add(playButton);
 
-            
-          
+            if (gameData.getProgression("lobby") == 6)
+            {
+                playButton.ComponentTexture = playBtnChngText;
+                playButton.ComponentRectangle = playBtnChngRct;
+            }
 
             base.LoadContent();
         }
         protected override void UnloadContent()
         {
 
-            //Components.Remove(lobby);
-            //Components.Remove(gameGUI);
-            //for (int i = 0; i < levels.Count; i++)
-            //    Components.Remove(levels[i]);
-            //Components.Remove(playButton);
+          
+            for (int l = 0; l < levels.Count; l++)
+               levels[l] = null;
+            levels.Clear();
+            playButton = null;
+            lobby = null;
+
+            Content.Unload();          
             Components.Clear();
+            gameData = null;
+            GC.Collect();
+           
+            GC.WaitForPendingFinalizers();
+
+            string test = GC.GetTotalMemory(true).ToString();
+        
             base.UnloadContent();
+           
         }
 
         public override void Update(GameTime gameTime)
@@ -171,32 +196,43 @@ namespace Toyroom.Scenes
            
 
             touchCollection = TouchPanel.GetState();
-
-            if (playButton.compPushed(touchCollection))
-            {
-                wichLevel = gameData.getProgression("lobby");
-               // wichLevel = 5;
-                this.UnloadContent();
-          
-            }
-            for (int i = 0; i < levels.Count; i++)
-            {
-                if (levels[i].compPushed(touchCollection))
-                {
-                    wichLevel = i + 1;
-                    this.UnloadContent();
-                }
-            }
            
-          
-          
+            if (touchCollection.Count > 0)
+            {
+                if (playButton.compPushed(touchCollection))
+                {
+
+
+                    wichLevel = sceneProgression + 1;
+                    this.UnloadContent();
+
+
+
+                }
+            }  
+
+            if (touchCollection.Count > 0)
+            {
+                for (int i = 0; i < levels.Count; i++)
+                {
+                    if (levels[i].compPushed(touchCollection))
+                    {
+                        if (i <= gameData.getProgression("lobby"))
+                        {
+                            wichLevel = i + 1;
+                            this.UnloadContent();
+                        }
+                        else
+                        {
+                            vibration.Start(TimeSpan.FromMilliseconds(500));
+                        }
+                    }
+                }
+
+            }
 
             base.Update(gameTime);
         }
-
-
-
-
 
     }
 }

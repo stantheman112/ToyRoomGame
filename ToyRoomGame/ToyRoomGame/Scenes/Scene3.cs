@@ -12,7 +12,7 @@ using Microsoft.Xna.Framework.Input.Touch;
 using RLGames;
 using Toyroom.Components;
 using Toyroom.GameStorage;
-using System.Diagnostics;
+
 using Microsoft.Devices.Sensors;
 
 
@@ -46,12 +46,8 @@ namespace Toyroom.Scenes
         {
             Components = components;
             Content = content;
-            colorList = GameTools.elementColors();
-            gameStorage = new GameData("scene3");
-            if(gameStorage.fileExists(gameStorage.FileName)==false)
-                 gameStorage.saveScore(0, 0);
-           
-            // TODO: Construct any child components here
+            colorList = GameTools.elementColors(colorList);
+            gameStorage = new GameData("lobby");
         }
 
         private void accelSensor_ReadingChanged(object sender, AccelerometerReadingEventArgs e)
@@ -69,19 +65,16 @@ namespace Toyroom.Scenes
         public override void Initialize()
         {
             initPauseScreen();
-            bskHit = new Rectangle(35, 390, 180, 80); 
+            bskHit = new Rectangle(35, 400, 180, 80); 
             accelSensor = new Accelerometer();
             accelSensor.Start();
             accelSensor.ReadingChanged += accelSensor_ReadingChanged;
         
-            floorToysB = new List<BasicComponent>();
-            floorToysI = new List<BasicComponent>();
-            floorToys = new List<BasicComponent>();
-
-            mannRect = new Rectangle(545, 50, 185, 370);
-            mannRect2 = new Rectangle(550, 50, 180, 370);
-            mannRect3 = new Rectangle(515, 50, 215, 370);
-            spriteBatch = new SpriteBatch(Game.GraphicsDevice);
+            indicatorRct = new Rectangle(470, 100, 200, 200);
+            mannRect = new Rectangle(545, 30, 185, 370);
+            mannRect2 = new Rectangle(550, 30, 180, 370);
+            mannRect3 = new Rectangle(515, 30, 215, 370);
+            spriteBatch = new SpriteBatch(gameMS.GraphicsDevice);
          
             crayonRect = new Rectangle(0, 430, 200, 70);
             basketLeftRect = new Rectangle(0, 320, 250, 150);
@@ -93,27 +86,28 @@ namespace Toyroom.Scenes
             rightColor = new Color();
             wrongColor = new Color();
 
-            rectangles.Add(new Rectangle(510, 180, 120, 90)); //sportscar
-            rectangles.Add(new Rectangle(530, 150, 130, 120)); //plane
-            rectangles.Add(new Rectangle(510, 170, 130, 90));//train
-            rectangles.Add(new Rectangle(510, 190, 120, 90)); //tractor
-            rectangles.Add(new Rectangle(510, 170, 120, 120)); //digger
-            rectangles.Add(new Rectangle(510, 150, 130, 130)); //dino
-            rectangles.Add(new Rectangle(505, 160, 120, 120)); //baby
-            rectangles.Add(new Rectangle(505, 130, 120, 120)); //soldier
-            rectangles.Add(new Rectangle(505, 180, 110, 140));//actionfigure
-            rectangles.Add(new Rectangle(505, 180, 120, 120));//teddy
-            rectangles.Add(new Rectangle(515, 195, 70, 70)); //block
-         
-            rectangles.Add(new Rectangle(505, 170, 100, 100));//ball
-            rectangles.Add(new Rectangle(520, 130, 100, 150)); //balloon
-            rectangles.Add(new Rectangle(500, 150, 130, 120)); //pad
-            rectangles.Add(new Rectangle(505, 120, 120, 120)); //horse
-            rectangles.Add(new Rectangle(505, 150, 120, 90)); //racecar
-            rectangles.Add(new Rectangle(510, 190, 150, 120));//dumper
+            rectangles[0] = new Rectangle(510, 190, 120, 90); //sportscar
+            rectangles[1] = new Rectangle(530, 160, 130, 120); //plane
+            rectangles[2] = new Rectangle(510, 180, 130, 90);//train
+            rectangles[3] = new Rectangle(510, 200, 120, 90); //tractor
+            rectangles[4] = new Rectangle(510, 180, 120, 120); //digger
+            rectangles[5] = new Rectangle(510, 160, 130, 130); //dino
+            rectangles[6] = new Rectangle(505, 170, 120, 120); //baby
+            rectangles[7] = new Rectangle(505, 165, 120, 120); //soldier
+            rectangles[8] = new Rectangle(505, 170, 120, 120);//actionfigure
+            rectangles[9] = new Rectangle(505, 190, 120, 120);//teddy
+            rectangles[10] = new Rectangle(515, 205, 70, 70); //block
+            rectangles[11] = new Rectangle(505, 170, 100, 100);//ball
+            rectangles[12] = new Rectangle(520, 140, 100, 150); //balloon
+            rectangles[13] = new Rectangle(515, 160, 130, 120); //pad
+            rectangles[14] = new Rectangle(510, 160, 120, 120); //horse
+            rectangles[15] = new Rectangle(510, 190, 120, 90); //racecar
+            rectangles[16] = new Rectangle(510, 190, 150, 120);//dumper
+
+          
           
 
-            numberOfTurns = rectangles.Count;
+            numberOfTurns = rectangles.Length;
           
             rnd = new Random();
 
@@ -128,11 +122,11 @@ namespace Toyroom.Scenes
         {
 
             backgroundMusic = Content.Load<SoundEffect>("ToyRoom");
-            yeah = Content.Load<SoundEffect>("ugotit");
+            yeah = Content.Load<SoundEffect>("yeah2");
             ohno = Content.Load<SoundEffect>("ohno");
             loadPauseScreen();
             loadScreen = Content.Load<Texture2D>("Images\\gui\\loadscreen");
-            loadScreenDraw(loadScreen, new Vector2(-90, -50));
+            loadScreenDraw(loadScreen, new Vector2(-90, -20));
             mannTexture = Content.Load<Texture2D>("Images\\theBoy");
             mannTexture2 = Content.Load<Texture2D>("Images\\theBoyShowing");
             mannTexture3 = Content.Load<Texture2D>("Images\\boytup");
@@ -141,24 +135,27 @@ namespace Toyroom.Scenes
             crayonTxt = Content.Load<Texture2D>("Images\\bigcrayonside");
             guiBubbleTxt = Content.Load<Texture2D>("Images\\talkingBubbleLeft");
             basketOpeningTxt = Content.Load<Texture2D>("Images\\wheelBasket2");
-            textures.Add(Content.Load<Texture2D>("Images\\sportscar"));
-            textures.Add(Content.Load<Texture2D>("Images\\theplane"));
-            textures.Add(Content.Load<Texture2D>("Images\\train"));
-            textures.Add(Content.Load<Texture2D>("Images\\tractor"));
-            textures.Add(Content.Load<Texture2D>("Images\\digger"));
-            textures.Add(Content.Load<Texture2D>("Images\\dino"));
-            textures.Add(Content.Load<Texture2D>("Images\\baby"));
-            textures.Add(Content.Load<Texture2D>("Images\\soldier"));
-            textures.Add(Content.Load<Texture2D>("Images\\actionFigure"));
-            textures.Add(Content.Load<Texture2D>("Images\\teddy"));
-            textures.Add(Content.Load<Texture2D>("Images\\block"));
-            textures.Add(Content.Load<Texture2D>("Images\\ball"));
-            textures.Add(Content.Load<Texture2D>("Images\\balloon"));
-            textures.Add(Content.Load<Texture2D>("Images\\colored\\pad"));
-            textures.Add(Content.Load<Texture2D>("Images\\horse"));
-            textures.Add(Content.Load<Texture2D>("Images\\racecar"));
-            
-            textures.Add(Content.Load<Texture2D>("Images\\dumper"));
+            indicatorTxt = Content.Load<Texture2D>("Images\\indicator");
+
+           
+
+            textures[0] = Content.Load<Texture2D>("Images\\sportscar");
+            textures[1] = Content.Load<Texture2D>("Images\\theplane");
+            textures[2] = Content.Load<Texture2D>("Images\\train");
+            textures[3] = Content.Load<Texture2D>("Images\\tractor");
+            textures[4] = Content.Load<Texture2D>("Images\\digger");
+            textures[5] = Content.Load<Texture2D>("Images\\dino");
+            textures[6] = Content.Load<Texture2D>("Images\\baby");
+            textures[7] = Content.Load<Texture2D>("Images\\soldier");
+            textures[8] = Content.Load<Texture2D>("Images\\actionFigure");
+            textures[9] = Content.Load<Texture2D>("Images\\teddy");
+            textures[10] = Content.Load<Texture2D>("Images\\block");
+            textures[11] = Content.Load<Texture2D>("Images\\ball");
+            textures[12] = Content.Load<Texture2D>("Images\\balloon");
+            textures[13] = Content.Load<Texture2D>("Images\\colored\\pad");
+            textures[14] = Content.Load<Texture2D>("Images\\horse");
+            textures[15] = Content.Load<Texture2D>("Images\\racecar");            
+            textures[16] = Content.Load<Texture2D>("Images\\dumper");
 
             basketTxt = Content.Load<Texture2D>("Images\\wheelBasket1");
 
@@ -168,25 +165,27 @@ namespace Toyroom.Scenes
             ohnoinst = ohno.CreateInstance();
 
             spriteFont = Content.Load<SpriteFont>("sf20");
-            talkingBubble = new GameGUI(this.Game, spriteFont, new Vector2(70, 100), "Kasper! \n the toycolors have gone \n crazy again! " +
-               "they will \n only go  into  the basket\n  if the basket has the \n same color as themselves! \nHelp me color the basket \n in  the right color!", Color.Black, 0f, new Vector2(0, 0), 1f, 0f);
+            talkingBubble = new GameGUI(this.Game, spriteFont, new Vector2(70, 100), "Friend! \n Help me! \n Roll the basket \n so it gets the \n same color as the toy !", Color.Black, 0f, new Vector2(0, 0), 1f, 0f);
             talkingBubble.GuiBackgroundRect = guiBubbleRct;
             talkingBubble.GuiBackgroundTxt = guiBubbleTxt;
             talkingBubble.GuiVisible = true;
             boy = new BasicComponent(this.Game, mannTexture, mannRect, 0.0f);
             basketLeft = new BasicComponent(this.Game, basketTxt, basketLeftRect, 0.0f);
-           //basketRight = new BasicComponent(this.Game, basketTxt, basketRightRect, 0.0f);
+          
             roomBackground = new BasicComponent(this.Game, roomTexture, roomRect, Color.White, 0.0f);
             toy = new MoveAbleComponent(this.Game, textures[0], defaultRect, Color.Orange, 0.0f);
             toy.CompRectX = -10000;
-         //   gameGUI = new GameGUI(this.Game, spriteFont, new Vector2(10,50), "0/"+numberOfTurns.ToString(), Color.Black);
-          //  gameGUI.MaxScore = rectangles.Count;
+      
             Components.Add(roomBackground);
             basketOpening = new BasicComponent(this.Game, basketOpeningTxt, basketOpeningRct, Color.White, 0.0f);
+            addToys(450, 460, 0, 700, 360, 390, 0, 700, true, true, 150, 150, false);
 
-
+            indicator = new BasicComponent(this.Game, indicatorTxt, indicatorRct, Color.White, 0.0f);
+            indicator.DrawOrder = 12122;
+            indicator.ItemDraw = false;
+            Components.Add(indicator);
             roomBackground.DrawOrder = -100;
-            basketLeft.DrawOrder = 200;
+            basketLeft.DrawOrder = 213;
             basketOpening.DrawOrder = 198;
             toy.DrawOrder = 199;
             boy.DrawOrder = 100;
@@ -194,38 +193,19 @@ namespace Toyroom.Scenes
             backgroundMusicInst = backgroundMusic.CreateInstance();
             yeahinst = yeah.CreateInstance();
             ohnoinst = ohno.CreateInstance();
-           
-
-            for (int i = 0; i < textures.Count; i++)
-            {
-
-                addFloorToy(i, i);
-         
-
-            }
-
-          
-        //    Components.Add(gameGUI);
-            for (int o = 0; o < floorToysB.Count; o++)
-            {
-                Components.Add(floorToysB[o]);
-            }
-            Components.Add(boy);
-            for (int b = 0; b < floorToysI.Count; b++)
-            {
-
-                Components.Add(floorToysI[b]);
-            }
-            Components.Add(basketOpening);    
-                 
+       
+            Components.Add(boy);          
+            Components.Add(basketOpening);                     
             Components.Add(toy);
             Components.Add(basketLeft);
-            for (int i = 0; i < 4; i++)
+            crayons = new BasicComponent[4];
+            for (int i = 0; i < crayons.Length; i++)
             {
                 BasicComponent crayonTemp = new BasicComponent(this.Game, crayonTxt, crayonRect, colorList[i], 0.0f);
                 crayonTemp.ItemDraw = true;
                 crayonRect.X += 200;
-                crayons.Add(crayonTemp);
+                crayons[i] = crayonTemp;
+                crayonTemp.DrawOrder = 212;
                 Components.Add(crayonTemp);
             }
             Components.Add(talkingBubble);
@@ -254,9 +234,10 @@ namespace Toyroom.Scenes
                         {
                             talkingBubble.GuiVisible = false;
                             Components.Remove(talkingBubble);
+                           
                             backgroundMusicInst.Play();
                         }
-                        if (backgroundMusicInst.State.ToString() == "Stopped")
+                        if (backgroundMusicInst.State.ToString() == musicStateStopped)
                             backgroundMusicInst.Play();
 
 
@@ -268,80 +249,59 @@ namespace Toyroom.Scenes
                             firstRun = false;
                             toy.ItemDraw = true;
 
-                            int nextTexture = rnd.Next(0, floorToys.Count);
+                         //   int nextTexture = rnd.Next(0, floorToys.Count);
+                            nextTexture = rnd.Next(0, toysCollected.Count - 1);
+                            toyName = toyNamePrefix + toysCollected[nextTexture].ToString();
 
 
-                            int nextColor = rnd.Next(0, 8);
-                            int nextWrongColor = nextColor;
+
+                            nextColor = rnd.Next(0, 8);
+                            nextWrongColor = nextColor;
                             while (nextWrongColor == nextColor)
                                 nextWrongColor = rnd.Next(0, 8);
-                            int i = rnd.Next(1, 3);
-                            GameTools.randomColor(ref rightColor, 255);
-                            GameTools.randomColor(ref wrongColor, 255);
-                            while (rightColor == wrongColor)
-                                GameTools.randomColor(ref wrongColor, 255);
+                          
+                          //  GameTools.randomColor(ref rightColor, 255, rnd);
+                          
+                            GameTools.randomColor(ref wrongColor, 255, rnd);
+                             while (rightColor == wrongColor)
+                                 GameTools.randomColor(ref wrongColor, 255, rnd);
+                            chooseCrayon = rnd.Next(0, 4);
 
-                            int chooseCrayon = rnd.Next(0, 4);
 
+                          
+                          
+                            toysBackground.removeSprite(toyName);
+                            rightColor = toysBackground.PickedToyColorNumber;
+                      
+                            crayons[chooseCrayon].ComponentColor = rightColor;
+                            toy.ComponentColor = rightColor;
+                            toy.ComponentTexture = textures[toysCollected[nextTexture]];
+                            toy.ComponentRectangle = rectangles[toysCollected[nextTexture]];
+                            toysCollected.RemoveAt(nextTexture);
 
-                            toy.ComponentColor = colorList[nextColor];
-                            crayons[chooseCrayon].ComponentColor = colorList[nextColor];
-
-                            toy.ComponentTexture = floorToys[nextTexture].ComponentTexture;
-                            toy.ComponentRectangle = rectangles[floorToys[nextTexture].ComponentNumber];
                             boy.ComponentTexture = mannTexture2;
-                            try
-                            {
-                                bool removed = false;
-                                for (int p = 0; p < floorToysI.Count; p++)
-                                {
-                                    if (floorToysI[p].ComponentType == floorToys[nextTexture].ComponentType)
-                                    {
-                                        Components.Remove(floorToys[nextTexture]);
-                                        floorToysI.Remove(floorToysI[p]);
-                                        floorToys.Remove(floorToys[nextTexture]);
-
-
-                                        removed = true;
-
-                                    }
-                                }
-                                if (removed == false)
-                                {
-                                    for (int n = 0; n < floorToysB.Count; n++)
-                                    {
-                                        if (floorToysB[n].ComponentType == floorToys[nextTexture].ComponentType)
-                                        {
-                                            Components.Remove(floorToys[nextTexture]);
-                                            floorToysB.Remove(floorToysB[n]);
-                                            floorToys.Remove(floorToys[nextTexture]);
-
-
-
-                                        }
-                                    }
-                                }
-
-
-                            }
-                            catch (Exception ex)
-                            {
-
-
-                            }
-
+                          
                             boy.ComponentTexture = mannTexture2;
                             boy.ComponentRectangle = mannRect2;
 
                         }
 
                     }
+                    if (timerNow == 0)
+                    {
+                        timerNow = timer;
+                    }
+                    if (timer - timerNow == 200 && toy.ItemTaken == false)
+                    {
+                        indicator.ItemDraw = true;
+                        timerNow = 0;
+                    }
                     if (toy.ItemTaken == true && boy.ComponentTexture != mannTexture3 && boy.ComponentTexture != boyDissapointedTxt)
                     {
+                        if (indicator.ItemDraw == true)
+                            indicator.ItemDraw = false;
                         boy.ComponentTexture = mannTexture;
                         boy.ComponentRectangle = mannRect;
-                        boy.ComponentTexture = mannTexture2;
-                        boy.ComponentRectangle = mannRect2;
 
                     }
                     if (toy.ComponentRectangle.Intersects(bskHit))
@@ -373,7 +333,7 @@ namespace Toyroom.Scenes
                 }
                 else
                 {
-                    if (casedRight > toysCased - 3)
+                    if (casedRight > numberOfTurns - 3)
                     {
                         if (gameStorage.getProgression("lobby") < 3)
                             gameStorage.saveProgression(3);

@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Input.Touch;
 using RLGames;
-using System.Diagnostics;
+
 
 
 namespace Toyroom.Components
@@ -36,7 +36,7 @@ namespace Toyroom.Components
 
 
         private Rectangle guiSize, guiBackgroundRect;
-        GameState gameState;
+       
         
 #region public properties
         public bool GuiVisible { get; set; }
@@ -44,7 +44,11 @@ namespace Toyroom.Components
             get
             {
                 return guiSize;
-            }  
+            }
+            
+            set {
+                guiSize = value;
+            }
         }
         public Vector2 TextPosition
         {
@@ -149,7 +153,7 @@ namespace Toyroom.Components
 
         }
 
-        public GameGUI(Game game, SpriteFont sprtFnt, Vector2 pos, string info, Color color, int guiSizeX, int guiSizeY, GameState gmstate)
+        public GameGUI(Game game, SpriteFont sprtFnt, Vector2 pos, string info, Color color, int guiSizeX, int guiSizeY)
             : base(game)
         {
             spriteFont = sprtFnt;
@@ -162,7 +166,7 @@ namespace Toyroom.Components
             textPosition = pos;
             advancedSettings = false;
             guiSize = new Rectangle((int)pos.X, (int)pos.Y, guiSizeX, guiSizeY);
-            gameState = gmstate;
+           
         }
 
 
@@ -184,30 +188,24 @@ namespace Toyroom.Components
            
           
         }
-        public bool chkClicked(Vector2 guiElementPos)
-        {
+        //public bool chkClicked(Vector2 guiElementPos)
+        //{
            
-            touchCollection = TouchPanel.GetState();
-            foreach (TouchLocation tl in touchCollection)
-            {
-               // Debug.WriteLine(tl.Position);
-                //Vector2 touchSpot = new Vector2((int)tl.Position.X, (int)tl.Position.Y);
-               Rectangle tmp = new Rectangle(Convert.ToInt16(tl.Position.X), Convert.ToInt16(tl.Position.Y), 20, 40);
-                //Rectangle element = new Rectangle(Convert.ToInt16(guiElementPos.X), Convert.ToInt16(guiElementPos.Y), 20, 40);
-               if (guiSize.Intersects(tmp))
-                   gameState.ActiveScene = Convert.ToInt16(infoText);
+        //    touchCollection = TouchPanel.GetState();
+        //    foreach (TouchLocation tl in touchCollection)
+        //    {
+              
+        //       Rectangle tmp = new Rectangle(Convert.ToInt16(tl.Position.X), Convert.ToInt16(tl.Position.Y), 20, 40);
+             
+        //       if (guiSize.Intersects(tmp))
+        //           gameState.ActiveScene = Convert.ToInt16(infoText);
                 
-                //if ((tl.State == TouchLocationState.Pressed)
-                //        || (tl.State == TouchLocationState.Moved))
-                //{
-                  
+             
 
-                //}
-
-            }
-            return false;
+        //    }
+        //    return false;
           
-        }
+        //}
 
         /// <summary>
         /// Allows the game component to update itself.

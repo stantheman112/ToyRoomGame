@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Input.Touch;
-using System.Diagnostics;
+
 
 
 namespace Toyroom.Components
@@ -22,7 +22,7 @@ namespace Toyroom.Components
     {
         private TouchCollection touchCollection;
         private bool itemTouched = false, itemTaken = false, itemMoving = false;
-        private int mvSpeed = 20 , startX, startY; // sette i kontstruktør? 
+        private int mvSpeed = 20 , startX, startY, offSetPos = 135; // sette i kontstruktør? 
         private bool movingAllowed = true;
 
         #region Public properties
@@ -136,7 +136,7 @@ namespace Toyroom.Components
 
                         if (itemTouched == true) //&& ((int)tl.Position.X >= componentRectangle.X - 100 &&(int)tl.Position.X <= componentRectangle.X + 100))
                         {
-                            componentRectangle.Y = (int)tl.Position.Y - 150;
+                            componentRectangle.Y = (int)tl.Position.Y - offSetPos;
                             // boy.ComponentTexture = mannTexture;
 
 
@@ -174,15 +174,15 @@ namespace Toyroom.Components
           
         }
 
-        public override void Draw(GameTime gameTime)
-        {
+        //public override void Draw(GameTime gameTime)
+        //{
           
-            spriteBatch.Begin();
-            if(itemDraw)
-            spriteBatch.Draw(componentTexture, componentRectangle, componentColor);
-            spriteBatch.End();
+        //    spriteBatch.Begin();
+        //    if(itemDraw)
+        //    spriteBatch.Draw(componentTexture, componentRectangle, componentColor);
+        //    spriteBatch.End();
             
-        }
+        //}
 
         public void resetToStart()
         {         

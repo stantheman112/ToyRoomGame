@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Input.Touch;
-
+using RLGames;
 
 namespace Toyroom.Components
 {
@@ -18,10 +18,19 @@ namespace Toyroom.Components
     /// </summary>
     public abstract class RLGameComponent : Microsoft.Xna.Framework.DrawableGameComponent
     {
+        protected Vector2 orgin;
+        protected Random rnd;
+        protected float rotationDirection = -1f;
+        protected Color floorToyColor, tmpColor;
+        protected Point offSetPoint = new Point(0, 0);       
+        protected List<Color> colorList = new List<Color>();
+        protected Int16 rotHolder = 2;
+        protected float draworder = 0.0f;
         protected GraphicsDeviceManager graphics;
         protected SpriteBatch spriteBatch;
        protected Texture2D componentTexture;
-      protected   Rectangle componentRectangle;
+      protected   Rectangle componentRectangle;  
+      protected Vector2 rotational = new Vector2(0f,0f);
         List<Color> basketColor = new List<Color>();
         List<Texture2D> textures = new List<Texture2D>();
        protected Color componentColor = Color.White, leftBsktColor = Color.White, itemColor = Color.Wheat;
@@ -29,8 +38,8 @@ namespace Toyroom.Components
        protected float rotation;
         public int ComponentNumber = 0;
        public string ComponentType { get; set; }
-        protected bool itemDraw = true;
-
+        protected bool itemDraw = true, startedRotating = false;
+        float nullFloat = 0.0f;
        #region public properties
        public Texture2D ComponentTexture
         {
@@ -122,14 +131,23 @@ namespace Toyroom.Components
                 itemDraw = value;
             }
         }
+        public float Rotation
+        {
+            get {
+                return rotation;
+            }
+            set {
+                rotation = value;
+            }
+        }
        #endregion 
         public RLGameComponent(Game game, Texture2D texture, Rectangle rectangle, Color color, float rot)
             : base(game)
         {
             componentRectangle = rectangle;
             componentColor = color;
-            componentTexture = texture;
-            // TODO: Construct any child components here
+            componentTexture = texture;           
+          
         }
        
         public  RLGameComponent(Game game, Texture2D texture, Rectangle rectangle, float rot)
@@ -138,10 +156,14 @@ namespace Toyroom.Components
             componentRectangle = rectangle;            
             componentTexture = texture;
             rotation = rot;
-         
-            // TODO: Construct any child components here
+           
+          
         }
+        public RLGameComponent(Game game, Texture2D[] textures, Rectangle[] rectangles)
+            : base(game)
+        {
 
+        }
         /// <summary>
         /// Allows the game component to perform any initialization it needs to before starting
         /// to run.  This is where it can query for any required services and load content.
@@ -162,19 +184,19 @@ namespace Toyroom.Components
 
         public bool compPushed(TouchCollection touchCollection)
         {
-           
+          
             foreach (TouchLocation tl in touchCollection)
             {
                 if ((tl.State == TouchLocationState.Pressed)
                         || (tl.State == TouchLocationState.Moved))
                 {
-                   if(this.componentRectangle.Contains( (int)tl.Position.X, (int)tl.Position.Y))                  
+                    if (this.componentRectangle.Contains((int)tl.Position.X, (int)tl.Position.Y))
                     {
                         return true;
                     }
                 }
-
             }
+       
             
             
             return false; 
@@ -187,24 +209,40 @@ namespace Toyroom.Components
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         public override void Update(GameTime gameTime)
         {
-            // TODO: Add your update code here
-
+           
             base.Update(gameTime);
         }
 
+      
         public override void Draw(GameTime gameTime)
         {
-            if (itemDraw == true)
+            try
             {
-                spriteBatch.Begin();
+                if (componentTexture != null)
+                {
+                    if (itemDraw == true)
+                    {
+                        spriteBatch.Begin(); 
+                    
 
-                if (rotation == 0.0f)
-                    spriteBatch.Draw(componentTexture, componentRectangle, componentColor);
-                else
-                    spriteBatch.Draw(componentTexture, componentRectangle, null, componentColor, rotation, new Vector2(0, 0), SpriteEffects.None, 0.0f);
-                spriteBatch.End();
-                base.Draw(gameTime);
+                        if (rotation == nullFloat)
+                            spriteBatch.Draw(componentTexture, componentRectangle, componentColor);
+                        else
+                        {
+                            rotational.X = componentTexture.Width / rotHolder;
+                            rotational.Y = componentTexture.Height / rotHolder;
+
+                            spriteBatch.Draw(componentTexture, componentRectangle, null, componentColor, rotation, rotational, SpriteEffects.None, nullFloat);
+                            
+                        }
+                      
+                        spriteBatch.End();
+                        base.Draw(gameTime);
+                    }
+
+                }
             }
+            catch (Exception ex) { }
         }
     }
 }
